@@ -17,7 +17,8 @@ def listPosts_resolver(obj, info):
             "errors": [str(error)]
         }
     return payload
-
+    
+@convert_kwargs_to_snake_case
 def getPost_resolver(obj, info, id):
     try:
         post = Post.query.get(id)
