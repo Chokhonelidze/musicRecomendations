@@ -27,3 +27,9 @@ createPost(title: String!, description: String!, created_at: String): PostResult
 updatePost(id: ID!, title: String, description: String): PostResult!
 deletePost(id: ID): PostResult!
 """
+
+posts = {
+    "type":type,
+    "query":query,
+    "mutation":mutation,
+}

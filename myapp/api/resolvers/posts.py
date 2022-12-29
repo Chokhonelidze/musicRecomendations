@@ -100,3 +100,8 @@ def delete_post_resolver(obj, info, id):
 mutations = {"createPost":create_post_resolver,
     "updatePost":update_post_resolver,
     "deletePost":delete_post_resolver}
+
+posts_resolver = {
+    "queries":queries,
+    "mutations":mutations
+}

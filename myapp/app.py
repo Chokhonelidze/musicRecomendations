@@ -5,21 +5,30 @@ from ariadne.constants import PLAYGROUND_HTML
 from flask import request, jsonify
 from api.queries import listPosts_resolver, getPost_resolver
 from api.mutations import create_post_resolver,update_post_resolver,delete_post_resolver
-from api.schemas.posts import type,query,mutation
-from api.resolvers.posts import queries,mutations 
+from api.schemas.posts import posts
+from api.resolvers.posts import posts_resolver
+from api.schemas.users import users
+from api.resolvers.users import User_resolver
 posts = {
-    "type":type,
-    "query":query,
-    "mutation":mutation,
-    "query_resolver":queries,
-    "mutations_resolver":mutations
+    "type":posts["type"],
+    "query":posts["query"],
+    "mutation":posts["mutation"],
+    "query_resolver":posts_resolver["queries"],
+    "mutations_resolver":posts_resolver["mutations"]
 }
-print(posts["type"])
+users = {
+    "type":users["type"],
+    "query":users["query"],
+    "mutation":users["mutation"],
+    "query_resolver":User_resolver["queries"],
+    "mutations_resolver":User_resolver["mutations"]
+}
+
 type_defs = ""
 type=[]
 query=[]
 mutation=[]
-objs = [posts]
+objs = [posts,users]
 
 query_resolver = ObjectType("Query")
 
@@ -37,7 +46,7 @@ for ob in objs:
 
 
 
-type_defs = "\n".join(type)+"\n"+"type Query { \n"+"/n".join(query)+"} \n type Mutation {"+"\n".join(mutation)+"\n }"
+type_defs = "\n".join(type)+"\n"+"type Query { \n"+"\n".join(query)+"} \n type Mutation {"+"\n".join(mutation)+"\n }"
 
 
 #query_resolver.set_field("listPosts", listPosts_resolver)
