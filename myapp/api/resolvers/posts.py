@@ -17,7 +17,7 @@ def listPosts_resolver(obj, info):
             "errors": [str(error)]
         }
     return payload
-    
+
 @convert_kwargs_to_snake_case
 def getPost_resolver(obj, info, id):
     try:
@@ -33,7 +33,7 @@ def getPost_resolver(obj, info, id):
         }
     return payload
 
-query = {"listPosts":getPost_resolver,"getPost":listPosts_resolver}
+queries = {"listPosts":listPosts_resolver,"getPost":getPost_resolver}
 
 # mutations.py
 
@@ -97,6 +97,6 @@ def delete_post_resolver(obj, info, id):
     return payload
 
 
-mutation = {"createPost":create_post_resolver,
+mutations = {"createPost":create_post_resolver,
     "updatePost":update_post_resolver,
     "deletePost":delete_post_resolver}
