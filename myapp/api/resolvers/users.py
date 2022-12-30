@@ -69,11 +69,14 @@ def create_user_resolver(obj,info,user):
 @convert_kwargs_to_snake_case
 def update_user_resolver(obj,info,user):
     try:
-        userI = User.query.get(id)
+        userI = User.query.get(user["id"])
         if userI:
-            userI.name = user['name']
-            userI.password = user['password']
-            userI.role = user['role']
+            if user.get("email"):
+                userI.email = user['email']
+            if user.get("password"):
+                userI.password = user['password']
+            if(user.get("role")):
+                userI.role = user['role']
         db.session.add(userI)
         db.session.commit()
         payload = {
