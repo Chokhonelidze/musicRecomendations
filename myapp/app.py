@@ -7,6 +7,13 @@ from api.schemas.posts import posts
 from api.resolvers.posts import posts_resolver
 from api.schemas.users import users
 from api.resolvers.users import User_resolver
+from api.schemas.songs import songs
+#from surprise.prediction_algorithms.knns import KNNBasic
+
+#gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=9, verbose=False)
+#gs_optimized.fit(data)
+#gs_optimized.predict(6958,1671,verbose=True)
+
 posts = {
     "type":posts["type"],
     "query":posts["query"],
