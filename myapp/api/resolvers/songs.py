@@ -1,14 +1,66 @@
 from ariadne import convert_kwargs_to_snake_case
 from api import db
 from ..models import Songs
+from surprise.reader import Reader
+from surprise.dataset import Dataset
+from surprise.prediction_algorithms.knns import KNNBasic
+import pandas as pd
+def get_recommendations(data, user_id, top_n, algo):
+    
+    # Creating an empty list to store the recommended product ids
+    recommendations = []
+    
+    # Creating an user item interactions matrix 
+    user_item_interactions_matrix =  data.pivot(index='user_id', columns='song_id', values='play_count')
+    
+    # Extracting those business ids which the user_id has not visited yet
+    non_interacted_products = user_item_interactions_matrix.loc[user_id][user_item_interactions_matrix.loc[user_id].isnull()].index.tolist()
+    
+    # Looping through each of the business ids which user_id has not interacted yet
+    for item_id in non_interacted_products:
+        
+        # Predicting the ratings for those non visited restaurant ids by this user
+        est = algo.predict(user_id,item_id).est
+        
+        # Appending the predicted ratings
+        recommendations.append((item_id,est))
 
+    # Sorting the predicted ratings in descending order
+    recommendations.sort(key = lambda x : x[1], reverse = True)
+
+    return recommendations[:top_n] # Returing top n highest predicted rating products for this user
+@convert_kwargs_to_snake_case
+def predict_songs_resolver(obj,info,query):
+    try:
+        gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=9, verbose=False)
+        df = pd.read_sql_table('Songs',con=db.get_engine(),index_col='id')
+        print(df.head())
+        #df = pd.read_csv('final_data.csv')
+        reader = Reader(rating_scale=(0,5))
+        data = Dataset.load_from_df(df[['user_id', 'song_id', 'play_count']], reader) 
+        trainset = data.build_full_trainset()
+        gs_optimized.fit(trainset)
+        p_play_count_play = gs_optimized.predict(query['user_id'],query["song_id"],verbose=True)
+        print(p_play_count_play)
+        payload = {
+            "success":True,
+            "predict":gs_optimized.get_neighbors(1,k=100)
+        }
+    except Exception as error:
+        payload = {
+            "success":False,
+            "errors":error
+        }
+    return payload
+
+    
 @convert_kwargs_to_snake_case
 def list_songs_resolver(obj,info):
     try:
         songs =  [song.to_dict() for song in Songs.query.all()]
         payload = {
             "success":True,
-            "songs":[songs]
+            "songs":songs
         }
     except Exception as error:
         payload = {
@@ -20,7 +72,10 @@ def list_songs_resolver(obj,info):
 @convert_kwargs_to_snake_case
 def get_song_resolver(obj,info,id):
     try:
-        song = Songs.query.get(id)
+        song = Songs.query.filter_by(song_id=id).first()
+        print(Songs.query.filter_by(song_id=id).first())
+        if song:
+            song = song.to_dict()
         payload = {
             "success": True,
             "song":song
@@ -32,11 +87,41 @@ def get_song_resolver(obj,info,id):
         }
     return payload
 
-queries = {"listSongs":list_songs_resolver,"getSong":get_song_resolver}
+queries = {"listSongs":list_songs_resolver,
+            "getSong":get_song_resolver,
+            "predictSong":predict_songs_resolver
+            }
 
-mutations = {}
+@convert_kwargs_to_snake_case
+def create_song_resolver(obj,info,song):
+    try:
+        songI = Songs(
+            user_id = song['user_id'],
+            song_id = song['song_id'],
+            play_count = song['play_count'],
+            title = song['title'],
+            release = song['release'],
+            artist_name = song['artist_name'],
+            year = song['year'] 
+        )
+        db.session.add(songI)
+        db.session.commit()
+        payload = {
+            "success": True,
+            "song": songI.to_dict()
+        }
+    except Exception as error:
+        payload = {
+            "success":False,
+            "errors":[str(error)]
+        }
+    return payload
+
+mutations = {
+    "createSong":create_song_resolver
+}
 
 songs_resolver = {
     "queries":queries,
-    "mutation":mutations
+    "mutations":mutations
 }

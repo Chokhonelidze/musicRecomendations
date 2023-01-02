@@ -3,7 +3,7 @@ type song {
     id:ID!,
     user_id:Int!,
     song_id:Int!,
-    pley_cout:Int,
+    play_count:Int,
     title:String!,
     release:String,
     artist_name:String!,
@@ -19,12 +19,32 @@ type songResult {
     errors: [String]
     song:song
 }
+type predictOutput {
+    success: Boolean!,
+    errors: [String],
+    predict:[Int]
+}
+input songInput {
+    user_id:Int!,
+    song_id:Int!
+}
+input createSong{
+    user_id:Int!,
+    song_id:Int!,
+    play_count:Int,
+    title:String!,
+    release:String,
+    artist_name:String!,
+    year:Int!
+}
 """
 query="""
-    listSongs: songsResul
-    getSong(id:ID!) : songResult
+    listSongs: songsResult,
+    getSong(id:ID!) : songResult,
+    predictSong(query:songInput!):predictOutput
 """
 mutation="""
+    createSong(song:createSong!):songResult
 """
 songs = {
     "type":type,

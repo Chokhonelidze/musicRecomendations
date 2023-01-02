@@ -8,6 +8,7 @@ from api.resolvers.posts import posts_resolver
 from api.schemas.users import users
 from api.resolvers.users import User_resolver
 from api.schemas.songs import songs
+from api.resolvers.songs import songs_resolver
 #from surprise.prediction_algorithms.knns import KNNBasic
 
 #gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=9, verbose=False)
@@ -28,12 +29,19 @@ users = {
     "query_resolver":User_resolver["queries"],
     "mutations_resolver":User_resolver["mutations"]
 }
+songs = {
+    "type":songs["type"],
+    "query":songs["query"],
+    "mutation":songs["mutation"],
+    "query_resolver":songs_resolver["queries"],
+    "mutations_resolver":songs_resolver["mutations"]
+}
 
 type_defs = ""
 type=[]
 query=[]
 mutation=[]
-objs = [posts,users]
+objs = [posts,users,songs]
 
 query_resolver = ObjectType("Query")
 

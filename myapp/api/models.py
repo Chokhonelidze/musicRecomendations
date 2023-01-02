@@ -56,8 +56,8 @@ class Songs(db.Model):
         }
 with app.app_context():
     db.create_all()
-    """
-    filename="song_data.csv"
+    
+    filename="final_data.csv"
     data =pd.read_csv("/usr/local/src/webapp/src/api/"+filename)
     
     for index,row in data.iterrows():
@@ -73,5 +73,4 @@ with app.app_context():
         )
         db.session.add(song)
     db.session.commit()
-    """
-   
+    
