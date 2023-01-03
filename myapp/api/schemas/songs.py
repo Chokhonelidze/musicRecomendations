@@ -19,10 +19,14 @@ type songResult {
     errors: [String]
     song:song
 }
+type prediction {
+    id:ID,
+    score:String
+}
 type predictOutput {
     success: Boolean!,
     errors: [String],
-    predict:[Int]
+    predict:[prediction]
 }
 input songInput {
     user_id:Int!,
@@ -39,7 +43,7 @@ input createSong{
 }
 """
 query="""
-    listSongs: songsResult,
+    listSongs(search:String): songsResult,
     getSong(id:ID!) : songResult,
     predictSong(query:songInput!):predictOutput
 """

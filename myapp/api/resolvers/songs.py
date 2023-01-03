@@ -23,10 +23,10 @@ def get_recommendations(data, user_id, top_n, algo):
         est = algo.predict(user_id,item_id).est
         
         # Appending the predicted ratings
-        recommendations.append((item_id,est))
+        recommendations.append({"id":item_id,"score":est})
 
     # Sorting the predicted ratings in descending order
-    recommendations.sort(key = lambda x : x[1], reverse = True)
+    recommendations.sort(key = lambda x : x["score"], reverse = True)
 
     return recommendations[:top_n] # Returing top n highest predicted rating products for this user
 @convert_kwargs_to_snake_case
@@ -40,11 +40,14 @@ def predict_songs_resolver(obj,info,query):
         data = Dataset.load_from_df(df[['user_id', 'song_id', 'play_count']], reader) 
         trainset = data.build_full_trainset()
         gs_optimized.fit(trainset)
-        p_play_count_play = gs_optimized.predict(query['user_id'],query["song_id"],verbose=True)
-        print(p_play_count_play)
+        #p_play_count_play = gs_optimized.predict(query['user_id'],query["song_id"],verbose=True)
+        #print(p_play_count_play)
+        df_rating=df.drop_duplicates()
+        recommendations =get_recommendations(df_rating,query['user_id'],5,gs_optimized)
+        print(recommendations)
         payload = {
             "success":True,
-            "predict":gs_optimized.get_neighbors(1,k=100)
+            "predict":recommendations
         }
     except Exception as error:
         payload = {
@@ -55,9 +58,12 @@ def predict_songs_resolver(obj,info,query):
 
     
 @convert_kwargs_to_snake_case
-def list_songs_resolver(obj,info):
+def list_songs_resolver(obj,info,search=""):
     try:
-        songs =  [song.to_dict() for song in Songs.query.all()]
+        if search:
+            songs =  [song.to_dict() for song in Songs.query.filter(Songs.title.like("%"+search+"%")).group_by('song_id').all()]
+        else:
+             songs =  [song.to_dict() for song in Songs.query.group_by('song_id').all()] 
         payload = {
             "success":True,
             "songs":songs
