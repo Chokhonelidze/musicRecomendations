@@ -1,6 +1,7 @@
 from api import app, db
 from datetime import datetime
 import pandas as pd
+from datetime import date
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -56,21 +57,35 @@ class Songs(db.Model):
         }
 with app.app_context():
     db.create_all()
-    
-    filename="final_data.csv"
-    data =pd.read_csv("/usr/local/src/webapp/src/api/"+filename)
-    
-    for index,row in data.iterrows():
-        song = Songs(
-            id=row[0],
-            user_id = row[1],
-            song_id = row[2],
-            play_count = row[3],
-            title = row[4],
-            release = row[5],
-            artist_name = row[6],
-            year = row[7]
-        )
-        db.session.add(song)
-    db.session.commit()
+    print(Songs.query.first())
+    if not Songs.query.first():
+        filename="final_data.csv"
+        data =pd.read_csv("/usr/local/src/webapp/src/api/"+filename)
+        
+        for index,row in data.iterrows():
+            song = Songs(
+                id=row[0],
+                user_id = row[1],
+                song_id = row[2],
+                play_count = row[3],
+                title = row[4],
+                release = row[5],
+                artist_name = row[6],
+                year = row[7]
+            )
+            today = date.today()
+            email = str(row[1])+"@yahoo.com";
+            userf = User.query.filter_by(email=email).first()
+            if not userf:
+                userI = User(
+                    id = row[1],
+                    email=email,
+                    password="123456",
+                    role=0,
+                    created_at=today.strftime("%Y-%m-%d %H:%M:%S")
+                    )
+                db.session.add(userI)
+
+            db.session.add(song)
+        db.session.commit()
     
