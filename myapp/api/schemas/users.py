@@ -16,6 +16,11 @@ type UserResult {
     errors: [String]
     user: User
 }
+type loginOutput {
+    success: Boolean!,
+    error: String,
+    user:User
+}
 input createUser {
     email:String!,
     password:String!
@@ -33,9 +38,14 @@ input UsersQuery {
     search: String,
     id:ID
 }
+input loginInput {
+    email: String!,
+    password: String!
+}
 """
 query = """
-User(query:UsersQuery):UsersResult
+User(query:UsersQuery):UsersResult,
+login(query:loginInput):loginOutput
 """
 mutation = """
 createUser(user:createUser!):UserResult,

@@ -1,0 +1,63 @@
+.navBar {
+    display:grid;
+    grid-template-rows: 4fr 4fr;
+    position: sticky;
+    height:180px;
+}
+.firstColumn {
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(10,2fr);
+   
+
+}
+.secondColumn {
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(10,2fr);
+}
+.firstButton {
+    grid-row: inherit;
+    grid-column: 2/6;
+    width:100%;
+    height:70px;
+}
+.secondButton {
+    grid-row: inherit;
+    grid-column: 6/10;
+    width:100%;
+    height:70px;
+}
+.active {
+    background-color: aqua;
+}
+.view {
+    grid-column: 9/10;
+    display: flex;
+    flex-flow: row;
+}
+.view button {
+    font-size: 40px;
+    background-color: transparent;
+    border-style: none;
+    margin-right: auto;
+}
+.search {
+    grid-row: 1;
+    grid-column: 2/9;
+    z-index: 100;
+}
+
+.searchInput {
+    width: 70%;
+    margin-top: 10px;
+    float: left;
+    height: 48px;
+    z-index: 101;
+}
+.searchDropdown{
+    margin-top: 5px;
+    margin-left: 4px;
+    float: left;
+    z-index: 101;
+}

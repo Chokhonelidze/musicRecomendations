@@ -9,6 +9,7 @@ from api.schemas.users import users
 from api.resolvers.users import User_resolver
 from api.schemas.songs import songs
 from api.resolvers.songs import songs_resolver
+from flask_cors import cross_origin
 #from surprise.prediction_algorithms.knns import KNNBasic
 
 #gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=9, verbose=False)
@@ -67,10 +68,12 @@ schema = make_executable_schema(
     type_defs,query_resolver,mutation_resolver, snake_case_fallback_resolvers
 )
 @app.route("/graphql", methods=["GET"])
+@cross_origin()
 def graphql_playground():
     return PLAYGROUND_HTML, 200
 
 @app.route("/graphql", methods=["POST"])
+@cross_origin()
 def graphql_server():
     data = request.get_json()
     success, result = graphql_sync(

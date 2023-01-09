@@ -2,6 +2,24 @@ from ..models import User
 from ariadne import convert_kwargs_to_snake_case
 from datetime import date
 from api import db
+@convert_kwargs_to_snake_case
+def login(obj,info,query):
+    email = query['email']
+    password = query['password']
+    print(email,password);
+    user = User.query.filter_by(email=email).first()
+    print(user)
+    if user:
+        payload = {
+            "success": True,
+            "user":user.to_dict()
+        }
+    else:
+        payload = {
+            "success":False,
+            "error":"Wrong user or Password"
+        }
+    return payload
 
 @convert_kwargs_to_snake_case
 def users_resolver(obj,info,query):
@@ -33,7 +51,7 @@ def users_resolver(obj,info,query):
         }
     return payload
 
-queries = {"User":users_resolver}
+queries = {"User":users_resolver,"login":login}
 
 @convert_kwargs_to_snake_case
 def create_user_resolver(obj,info,user):

@@ -2,6 +2,7 @@ from ariadne import convert_kwargs_to_snake_case
 from api import db
 from ..models import Songs
 from surprise.reader import Reader
+from sqlalchemy import text
 from surprise.dataset import Dataset
 from surprise.prediction_algorithms.knns import KNNBasic
 import pandas as pd
@@ -43,7 +44,7 @@ def predict_songs_resolver(obj,info,query):
         #p_play_count_play = gs_optimized.predict(query['user_id'],query["song_id"],verbose=True)
         #print(p_play_count_play)
         df_rating=df.drop_duplicates()
-        recommendations =get_recommendations(df_rating,query['user_id'],5,gs_optimized)
+        recommendations =get_recommendations(df_rating,query.get("user_id"),5,gs_optimized)
         print(recommendations)
         payload = {
             "success":True,
@@ -52,16 +53,26 @@ def predict_songs_resolver(obj,info,query):
     except Exception as error:
         payload = {
             "success":False,
-            "errors":error
+            "errors":[str(error)]
         }
     return payload
 
     
 @convert_kwargs_to_snake_case
-def list_songs_resolver(obj,info,search=""):
+def list_songs_resolver(obj,info,filters=None):
     try:
-        if search:
-            songs =  [song.to_dict() for song in Songs.query.filter(Songs.title.like("%"+search+"%")).group_by('song_id').all()]
+        if filters.get('user'):
+            songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).all()];
+        elif filters.get("search"):
+            if filters['filter'] == 'title':
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.title.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+            elif filters['filter'] == 'release':
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.release.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+            elif filters['filter'] == 'artist_name':
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.artist_name.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+            elif filters['filter'] == 'year':
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.year.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+
         else:
              songs =  [song.to_dict() for song in Songs.query.group_by('song_id').all()] 
         payload = {
@@ -122,9 +133,37 @@ def create_song_resolver(obj,info,song):
             "errors":[str(error)]
         }
     return payload
+@convert_kwargs_to_snake_case
+def update_song_resolver(obj,info,song):
+    try:
+        assert(song.get('id'))
+        songI = Songs.query.get(song.get('id'))
+        assert(songI)
+        if song.get('play_count'):
+            songI['play_count'] = song.get('play_count')
+        if song.get('title'):
+            songI['title'] = song.get('title')
+        if(song.get('release')):
+            songI['release'] = song.get('release')
+        if(song.get('artist_name')):
+            songI['artist_name'] = song.get('artist_name')
+        if(song.get('year')):
+            songI['year'] = song.get('year')
+        db.session.commit()
+        payload = {
+            "success":True,
+            "song":songI
+        }
+    except Exception as error:
+        payload = {
+            "success":False,
+            "errors":[str(error)]
+        }
+    return payload
 
 mutations = {
-    "createSong":create_song_resolver
+    "createSong":create_song_resolver,
+    "updateSong":update_song_resolver
 }
 
 songs_resolver = {
