@@ -3,11 +3,17 @@ import { query } from "../functions/queries";
 import ReactStars from "react-rating-stars-component";
 import {UserContext} from "../App";
 import React from "react";
+
+
 export function Card(props) {
     const [user, setUser] = React.useContext(UserContext);
-    function changeStar(newRating){
-        console.log(newRating);
-        if(props.song.pay_count){
+    let style = `card border-primary mb-3 cards ${props?.style}`;
+    function searchVideo(term) {
+      props.videoSearch(term);
+    }
+    function changeStar(newRating) {
+        console.log(props.song);
+        if(props.song.play_count) {
             const q = `
             mutation updateSong($song:updateSong!){
                 updateSong(song:$song) {
@@ -54,12 +60,15 @@ export function Card(props) {
                 "year":props.song.year
             }},user,(data)=>{
                 console.log(data);
+                if(props.refresh){
+                  props.refresh();
+                }
             })
 
         }
     }
     return(
-        <div className="card border-primary mb-3 card">
+        <div className={style} onClick={()=>{searchVideo(`${props.title} ${props.header}`)}}>
             <div className="card-header">{props.header}</div>
             <div className="card-body text-dark">
                 <h5 className="card-title">{props.title}</h5>

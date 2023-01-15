@@ -5,8 +5,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_SERVER=http://localhost:5000/graphql
+      - REACT_APP_SERVER=http://myhome.smho.site:5000/graphql
       - REACT_APP_LOGINSERVER=http://localhost:3001
+      - REACT_APP_API_KEY_YT=AIzaSyDNhL4c26LyQTkxqNbTX4YjE9FzbLTgnb4
   web: 
     build: "myapp"
     ports: 

@@ -4,7 +4,13 @@ import { Login } from "./login";
 import { query } from "./functions/queries";
 import { Card } from "./components/cards";
 import "./App.css";
+import YTSearch from "youtube-api-search";
+const YOUTUBE_KEY  = process.env.REACT_APP_API_KEY_YT;
+
 const UserContext = React.createContext(null);
+
+
+
 function App() {
   const [search, setSearch] = React.useState("");
   const [filter, setFilter] = React.useState("title");
@@ -13,6 +19,15 @@ function App() {
   const [data, setData] = React.useState([]);
   const [userData, setUserData] = React.useState([]);
   const [predictions, setPredictions] = React.useState([]);
+  const [excludememo,setExcludememo] = React.useState([]);
+
+  const [video,setVideo] = React.useState(null);
+  const videoSearch = (term) => {
+    console.log("click");
+    YTSearch({key:YOUTUBE_KEY, term:term},(videos) =>{
+      setVideo(videos[0]);
+    })
+  }
  const getAllData = React.useCallback(async (user,excludes=[])=>{
     const q = `
     query Songs($filters:songFilters!) {
@@ -29,13 +44,12 @@ function App() {
         }
       }
     }
-    `;
+    `; 
      query(q, { filters: { search: search, filter: filter } }, user, (d) => {
       if (d.listSongs.success) {
         let data = d.listSongs.songs;
         if(excludes){
           data = data.filter((v)=>{
-            console.log(excludes,v.song_id)
             return  !excludes.includes(v.song_id);
           });
         }
@@ -74,12 +88,12 @@ function App() {
             if(excludes) {
               if(!excludes.includes(v.id)) {
                 data.push(v);
-                ids.push(v.id);
+                ids.push(v.song_id);
               }
             }
             else {
               data.push(v);
-              ids.push(v.id);
+              ids.push(v.song_id);
             }
           });  
           setUserData(data);
@@ -102,10 +116,12 @@ function App() {
     }
     `;
     const ids = [];
-     query(q,{songInput: {user_id: parseInt(user.id)}},user,
+    await query(q,{songInput: {user_id: parseInt(user.id)}},user,
               (d) => {
                 const allData = [];
-                d.predictSong.predict.forEach((v,i)=>{
+                console.log(d.predictSong);
+                if(d.predictSong.success){
+                d.predictSong.predict.forEach(async (v,i)=>{
                   const q = `
                   query findSong($id:ID!){
                     getSong(id:$id){
@@ -122,20 +138,24 @@ function App() {
                     }
                   }
                   `;
-                 query(q,{"id":v.id},user,(data)=>{
+                await query(q,{"id":v.id},user,(data)=>{
+                  console.log(data);
                     if(data.getSong.success){
                       allData.push(data.getSong.song);
-                      ids.push(v.id);
+                      ids.push(v.song_id);
                     }
                   });
 
                 });
+                console.log(allData);
                 setPredictions(allData);
+              }
               }
     );
     return ids;
   };
   async function load(){
+    console.log("load run!")
     if (user) {
       let allexcludes = [];
      await getRatedData(user)
@@ -149,7 +169,7 @@ function App() {
             console.log(excludes);
             if(excludes) {
               allexcludes = [...excludes,...allexcludes];
-              console.log(allexcludes);
+              console.log(allexcludes)
               getAllData(user,allexcludes);
             }
             else {
@@ -161,13 +181,19 @@ function App() {
           getAllData(user);
         }
       })
-     
+      setExcludememo(allexcludes);
     
     }
   }
   React.useEffect(() => {
-    load()
-  }, [user]);
+    if(search.length > 0 && user){
+      getAllData(user,excludememo);
+    }
+    else{
+      load()
+    }
+  }, [user,search]);
+
 
   function View(props) {
     let data = props.data.map((val, index) => {
@@ -178,6 +204,11 @@ function App() {
           header={val.artist_name}
           text={val.release + " " + val.year}
           song={val}
+          style=""
+          excludememo={excludememo}
+          setExcludememo={setExcludememo}
+          videoSearch = {videoSearch}
+          refresh = {load}
         />
       );
     });
@@ -191,12 +222,15 @@ function App() {
             header={val.artist_name}
             text={val.release + " " + val.year}
             song={val}
+            videoSearch = {videoSearch}
+            style = {'scored'}
           />
         );
       });
     }
     let recommended = "";
     if(props.recommendedData) {
+      console.log(props.recommendedData);
       recommended = props.recommendedData.map((val,index)=>{
        return (<Card
         key={"recommended_key_" + index}
@@ -204,13 +238,20 @@ function App() {
         header={val.artist_name}
         text={val.release + " " + val.year}
         song={val}
+        style={'predicted'}
+        excludememo={excludememo}
+        setExcludememo={setExcludememo}
+        videoSearch = {videoSearch}
+        refresh = {load}
       />);
       });
     }
+
     return (
       <div className="mid_container">
-        {userD}
+        {video?video:""}
         {recommended}
+        {userD}
         {data}
       </div>
     );
