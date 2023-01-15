@@ -35,6 +35,8 @@ input songFilters {
     search:String,
     filter:String! = "title",
     user:ID = ""
+    limit:Int = 100,
+    offset:Int = 0
 }
 input createSong{
     user_id:Int!,

@@ -62,19 +62,19 @@ def predict_songs_resolver(obj,info,query):
 def list_songs_resolver(obj,info,filters=None):
     try:
         if filters.get('user'):
-            songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).all()];
+            songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).limit(filters['limit']).offset(filters['offset']).all()];
         elif filters.get("search"):
             if filters['filter'] == 'title':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.title.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.title.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'release':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.release.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.release.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'artist_name':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.artist_name.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.artist_name.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'year':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.year.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').all()]
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.year.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
 
         else:
-             songs =  [song.to_dict() for song in Songs.query.group_by('song_id').all()] 
+             songs =  [song.to_dict() for song in Songs.query.group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()] 
         payload = {
             "success":True,
             "songs":songs

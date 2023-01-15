@@ -14,7 +14,8 @@ const UserContext = React.createContext(null);
 function App() {
   const [search, setSearch] = React.useState("");
   const [filter, setFilter] = React.useState("title");
-  const [page, setPage] = React.useState(0);
+  const [offset, setOffset] = React.useState(0);
+  const limit = 10;
   const [user, setUser] = React.useState();
   const [data, setData] = React.useState([]);
   const [userData, setUserData] = React.useState([]);
@@ -45,7 +46,7 @@ function App() {
       }
     }
     `; 
-     query(q, { filters: { search: search, filter: filter } }, user, (d) => {
+     query(q, { filters: { search: search, filter: filter, offset:offset,limit:limit } }, user, (d) => {
       if (d.listSongs.success) {
         let data = d.listSongs.songs;
         if(excludes){
@@ -188,15 +189,62 @@ function App() {
   React.useEffect(() => {
     if(search.length > 0 && user){
       getAllData(user,excludememo);
+      setOffset(0);
     }
     else{
       load()
     }
   }, [user,search]);
 
-
+  
   function View(props) {
-    let data = props.data.map((val, index) => {
+    const loadMore = React.useCallback(() => {
+      /**
+       *  this is the callback function used for data load.
+       */
+      const [data,setData] = props.dataSet;
+      const q = `
+      query Songs($filters:songFilters!) {
+        listSongs(filters:$filters){
+          errors,
+          success,
+          songs{
+            id,
+            song_id,
+            title,
+            release,
+            artist_name,
+            year
+          }
+        }
+      }
+      `; 
+      if (
+        window.innerHeight + document.documentElement.scrollTop+1 >=
+        document.scrollingElement.scrollHeight
+      ) {
+        let newOffset = offset+10;
+        let newLimit = limit;
+       console.log(newLimit,newOffset);
+       
+      function mergeData(newData) {
+        setOffset(newOffset);
+        if(newData.listSongs.songs && newData.listSongs.songs.length > 0) {
+          setData([...data,...newData.listSongs.songs]);
+        }
+      }
+      let parameters = {
+        search: search, 
+        filter: filter, 
+        offset:newOffset,
+        limit:newLimit
+      }
+  
+        query(q,{filters:parameters},user,mergeData);
+      }
+     
+    }, [data, setData, limit,filter,offset,search]);
+    let alldata = data.map((val, index) => {
       return (
         <Card
           key={"card_" + index}
@@ -246,13 +294,18 @@ function App() {
       />);
       });
     }
-
+    React.useEffect(()=>{
+      window.addEventListener("scroll", loadMore);
+      return () => {
+        window.removeEventListener("scroll", loadMore);
+      };
+    },[loadMore])
     return (
       <div className="mid_container">
         {video?video:""}
         {recommended}
         {userD}
-        {data}
+        {alldata}
       </div>
     );
   }
@@ -264,10 +317,10 @@ function App() {
           <NavBar
             filter={[filter, setFilter]}
             search={[search, setSearch]}
-            Page={page}
+            Page={offset}
           />
         )}
-        {user && data && <View data={data} userData={userData} recommendedData={predictions} />}
+        {user && data && <View dataSet={[data,setData]} userData={userData} recommendedData={predictions} />}
       </div>
     </UserContext.Provider>
   );
