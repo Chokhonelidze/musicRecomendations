@@ -26,7 +26,8 @@ function App() {
   const videoSearch = (term) => {
     console.log("click");
     YTSearch({key:YOUTUBE_KEY, term:term},(videos) =>{
-      setVideo(videos[0]);
+      console.log(videos[0]);
+      setVideo(`//www.youtube.com/embed/${videos[0].id.videoId}?autoplay=1&mute=0`);
     })
   }
  const getAllData = React.useCallback(async (user,excludes=[])=>{
@@ -302,7 +303,6 @@ function App() {
     },[loadMore])
     return (
       <div className="mid_container">
-        {video?video:""}
         {recommended}
         {userD}
         {alldata}
@@ -320,6 +320,7 @@ function App() {
             Page={offset}
           />
         )}
+        {video && user?<iframe src={video} name="youtube embed" allow="autoplay; encrypted-media" autoplay="1"> </iframe>:""}
         {user && data && <View dataSet={[data,setData]} userData={userData} recommendedData={predictions} />}
       </div>
     </UserContext.Provider>
