@@ -2,7 +2,7 @@ from ariadne import convert_kwargs_to_snake_case
 from api import db
 from ..models import Songs
 from surprise.reader import Reader
-from sqlalchemy import text
+from sqlalchemy import text,desc
 from surprise.dataset import Dataset
 from surprise.prediction_algorithms.knns import KNNBasic
 import pandas as pd
@@ -62,7 +62,7 @@ def predict_songs_resolver(obj,info,query):
 def list_songs_resolver(obj,info,filters=None):
     try:
         if filters.get('user'):
-            songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).limit(filters['limit']).offset(filters['offset']).all()];
+            songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).order_by(desc(Songs.play_count)).limit(filters['limit']).offset(filters['offset']).all()];
         elif filters.get("search"):
             if filters['filter'] == 'title':
                 songs =  [song.to_dict() for song in Songs.query.filter((Songs.title.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
@@ -90,7 +90,7 @@ def list_songs_resolver(obj,info,filters=None):
 def get_song_resolver(obj,info,id):
     try:
         song = Songs.query.filter_by(song_id=id).first()
-        print(Songs.query.filter_by(song_id=id).first())
+        print(song)
         if song:
             song = song.to_dict()
         payload = {
@@ -119,6 +119,7 @@ def create_song_resolver(obj,info,song):
             title = song['title'],
             release = song['release'],
             artist_name = song['artist_name'],
+            link = song['link'],
             year = song['year'] 
         )
         db.session.add(songI)
@@ -133,6 +134,29 @@ def create_song_resolver(obj,info,song):
             "errors":[str(error)]
         }
     return payload
+
+@convert_kwargs_to_snake_case
+def update_song_links(obj,info,song): 
+    try:
+        assert(song.get('id'))
+        assert(song.get('link'))
+        songs = Songs.query.filter_by(song_id=song.get('id')).all()
+        ids = []
+        for s in songs:
+            setattr(s,"link",song.get('link'))
+            ids.append(s.id)
+        db.session.commit()
+        payload = {
+            "success":True,
+            "ids":ids
+        }
+    except Exception as error:
+        payload = {
+            "success":False,
+            "errors":[str(error)]
+        }
+    return payload
+
 @convert_kwargs_to_snake_case
 def update_song_resolver(obj,info,song):
     try:
@@ -140,15 +164,25 @@ def update_song_resolver(obj,info,song):
         songI = Songs.query.get(song.get('id'))
         assert(songI)
         if song.get('play_count'):
-            songI['play_count'] = song.get('play_count')
+            #songI['play_count'] = song.get('play_count')
+            setattr(songI,"play_count",song.get('play_count'));
         if song.get('title'):
-            songI['title'] = song.get('title')
+            #songI['title'] = song.get('title')
+            setattr(songI,"title",song.get('title'));
         if(song.get('release')):
-            songI['release'] = song.get('release')
+            #songI['release'] = song.get('release')
+            setattr(songI,"release",song.get('release'));
         if(song.get('artist_name')):
-            songI['artist_name'] = song.get('artist_name')
+            #songI['artist_name'] = song.get('artist_name')
+            setattr(songI,"artist_name",song.get('artist_name'));
+        if(song.get('link')):
+            #songI['link'] = song.get('link')
+            setattr(songI,"link",song.get('link'));
         if(song.get('year')):
-            songI['year'] = song.get('year')
+            #songI['year'] = song.get('year')
+            setattr(songI,"year",song.get('year'));
+        
+            
         db.session.commit()
         payload = {
             "success":True,
@@ -163,7 +197,8 @@ def update_song_resolver(obj,info,song):
 
 mutations = {
     "createSong":create_song_resolver,
-    "updateSong":update_song_resolver
+    "updateSong":update_song_resolver,
+    "updateAllSongLinks":update_song_links
 }
 
 songs_resolver = {

@@ -23,12 +23,31 @@ function App() {
   const [excludememo,setExcludememo] = React.useState([]);
 
   const [video,setVideo] = React.useState(null);
-  const videoSearch = (term) => {
+  const videoSearch = (term,id,link=null) => {
     console.log("click");
-    YTSearch({key:YOUTUBE_KEY, term:term},(videos) =>{
-      console.log(videos[0]);
-      setVideo(`//www.youtube.com/embed/${videos[0].id.videoId}?autoplay=1&mute=0`);
-    })
+    if(link) {
+      setVideo(link);
+    }
+    else{
+      YTSearch({key:YOUTUBE_KEY, term:term},(videos) =>{
+        
+      const q = `
+      mutation UpdateAllSongs($song:updateAllSongLinksInput){
+        updateAllSongLinks(song:$song){
+          success,
+          errors,
+          ids
+        }
+      }
+      `;
+        let newlink = `//www.youtube.com/embed/${videos[0].id.videoId}?autoplay=1&mute=0`;
+        query(q,{"song":{id:id,link:newlink}},user,(d)=>{ 
+          console.log(videos[0]);
+          console.log(d);
+        })
+        setVideo(newlink);
+      })
+    }
   }
  const getAllData = React.useCallback(async (user,excludes=[])=>{
     const q = `
@@ -42,6 +61,7 @@ function App() {
           title,
           release,
           artist_name,
+          link,
           year
         }
       }
@@ -72,6 +92,7 @@ function App() {
           release,
           artist_name,
           year,
+          link,
           play_count
         }
       }
@@ -135,6 +156,7 @@ function App() {
                         title,
                         release,
                         artist_name,
+                        link,
                         year
                       }
                     }
@@ -215,6 +237,7 @@ function App() {
             title,
             release,
             artist_name,
+            link,
             year
           }
         }
@@ -320,7 +343,7 @@ function App() {
             Page={offset}
           />
         )}
-        {video && user?<iframe src={video} name="youtube embed" allow="autoplay; encrypted-media" autoplay="1"> </iframe>:""}
+        {video && user?<iframe src={video} name="youtube embed" allow="autoplay; encrypted-media" autoPlay="1"> </iframe>:""}
         {user && data && <View dataSet={[data,setData]} userData={userData} recommendedData={predictions} />}
       </div>
     </UserContext.Provider>

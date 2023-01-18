@@ -44,6 +44,7 @@ class Songs(db.Model):
     release = db.Column(db.String)
     artist_name = db.Column(db.String)
     year = db.Column(db.Integer)
+    link = db.Column(db.String)
     def to_dict(self):
         return {
             "id":self.id,
@@ -53,6 +54,7 @@ class Songs(db.Model):
             "title":self.title,
             "release":self.release,
             "artist_name":self.artist_name,
+            "link":self.link,
             "year":self.year
         }
 with app.app_context():

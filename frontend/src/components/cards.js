@@ -8,8 +8,8 @@ import React from "react";
 export function Card(props) {
     const [user, setUser] = React.useContext(UserContext);
     let style = `card border-primary mb-3 cards ${props?.style}`;
-    function searchVideo(term) {
-      props.videoSearch(term);
+    function searchVideo(term,id,link=null) {
+      props.videoSearch(term,id,link);
     }
     function changeStar(newRating) {
         console.log(props.song);
@@ -57,6 +57,7 @@ export function Card(props) {
                 "title":props.song.title,
                 "release":props.song.release,
                 "artist_name":props.song.artist_name,
+                "link":props.song.link,
                 "year":props.song.year
             }},user,(data)=>{
                 console.log(data);
@@ -68,7 +69,7 @@ export function Card(props) {
         }
     }
     return(
-        <div className={style} onClick={()=>{searchVideo(`${props.title} ${props.header}`)}}>
+        <div className={style} onClick={()=>{searchVideo(`${props.title} ${props.header}`,props.song.id,props?.song?.link)}}>
             <div className="card-header">{props.header}</div>
             <div className="card-body text-dark">
                 <h5 className="card-title">{props.title}</h5>

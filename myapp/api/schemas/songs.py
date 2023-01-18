@@ -7,6 +7,7 @@ type song {
     title:String!,
     release:String,
     artist_name:String!,
+    link:String,
     year:Int!
 }
 type songsResult {
@@ -28,6 +29,11 @@ type predictOutput {
     errors: [String],
     predict:[prediction]
 }
+type updateAllSongsType {
+    success: Boolean!,
+    errors:[String],
+    ids:[Int]
+}
 input songInput {
     user_id:Int!,
 }
@@ -45,15 +51,21 @@ input createSong{
     title:String!,
     release:String,
     artist_name:String!,
+    link:String,
     year:Int!
 }
 input updateSong{
-    id:ID
+    id:ID,
     play_count:Int,
     title:String,
     release:String,
     artist_name:String,
+    link:String,
     year:Int
+}
+input updateAllSongLinksInput {
+    id:ID!,
+    link:String!
 }
 """
 query="""
@@ -63,7 +75,8 @@ query="""
 """
 mutation="""
     createSong(song:createSong!):songResult,
-    updateSong(song:updateSong!):songResult
+    updateSong(song:updateSong!):songResult,
+    updateAllSongLinks(song:updateAllSongLinksInput):updateAllSongsType
 """
 songs = {
     "type":type,
