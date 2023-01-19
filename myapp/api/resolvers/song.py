@@ -54,7 +54,7 @@ def create_song_resolver(obj,info,song):
     return payload
 
 mutations = {
-    "createPureSong":create_song_resolver,
+    "createNewPureSong":create_song_resolver,
 }
 queries = {
     "listPureSongs":list_songs_resolver,

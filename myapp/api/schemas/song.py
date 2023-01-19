@@ -38,7 +38,7 @@ listPureSongs(filters:pureSongFilters!): pureSongsResult,
 """
 
 mutation="""
-createPureSong(song:createPureSong):pureSongResult
+createNewPureSong(song:createPureSong):pureSongResult
 """
 
 pureSongs = {

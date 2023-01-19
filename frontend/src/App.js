@@ -3,6 +3,7 @@ import { NavBar } from "./components/navBar";
 import { Login } from "./login";
 import { query } from "./functions/queries";
 import { Card } from "./components/cards";
+import { CreateSong } from "./createSong";
 import "./App.css";
 import YTSearch from "youtube-api-search";
 const YOUTUBE_KEY  = process.env.REACT_APP_API_KEY_YT;
@@ -346,6 +347,7 @@ function App() {
       <div className="App">
         
         <Login />
+        <CreateSong />
         {(user && user.role == 1)?<>new song</>:"" }
         {user && (
           <NavBar

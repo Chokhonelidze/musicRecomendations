@@ -74,7 +74,7 @@ export function Card(props) {
             <div className="card-body text-dark">
                 <h5 className="card-title">{props.title}</h5>
                 <p className="card-text">{props.text}</p>
-                {props?.predict?<p><h6>Predicted Star:{Number(props.predict).toFixed(2)}</h6></p>:""}
+                {props?.predict?<h6>Predicted Star:{Number(props.predict).toFixed(2)}</h6>:""}
             </div>
             <div className="card-footer">
                 <ReactStars 

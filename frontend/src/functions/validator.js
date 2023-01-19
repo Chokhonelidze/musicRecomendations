@@ -36,6 +36,25 @@ export function validator(field, type) {
           throw message;
         }
         return true;
+      case "year": 
+        if(isNaN(field)) {
+          let message = {
+            year: "Year should be Numeric like 2023"
+          }
+          throw message
+        }
+        if(field > Date.getYear()) {
+          let message = {
+            year: "Wrong Year"
+          }
+          throw message
+        }
+        case "youtubeID":
+          if(field.length != 11) {
+            let message = {
+              link: "link shiuld have 11 characters for example HVHUjzZZGQ4"
+            }
+          }
       default:
         return true;
     }
