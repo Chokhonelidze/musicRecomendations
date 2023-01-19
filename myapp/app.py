@@ -9,6 +9,8 @@ from api.schemas.users import users
 from api.resolvers.users import User_resolver
 from api.schemas.songs import songs
 from api.resolvers.songs import songs_resolver
+from api.schemas.song import pureSongs
+from api.resolvers.song import pure_songs_resolver
 from flask_cors import cross_origin
 #from surprise.prediction_algorithms.knns import KNNBasic
 
@@ -30,6 +32,13 @@ users = {
     "query_resolver":User_resolver["queries"],
     "mutations_resolver":User_resolver["mutations"]
 }
+song = {
+    "type":pureSongs["type"],
+    "query":pureSongs["query"],
+    "mutation":pureSongs["mutation"],
+    "query_resolver":pure_songs_resolver["queries"],
+    "mutations_resolver":pure_songs_resolver["mutations"]
+}
 songs = {
     "type":songs["type"],
     "query":songs["query"],
@@ -42,7 +51,7 @@ type_defs = ""
 type=[]
 query=[]
 mutation=[]
-objs = [posts,users,songs]
+objs = [posts,users,songs,song]
 
 query_resolver = ObjectType("Query")
 

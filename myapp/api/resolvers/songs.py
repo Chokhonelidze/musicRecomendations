@@ -1,6 +1,6 @@
 from ariadne import convert_kwargs_to_snake_case
 from api import db
-from ..models import Songs
+from ..models import Songs,Song
 from surprise.reader import Reader
 from sqlalchemy import text,desc
 from surprise.dataset import Dataset
@@ -150,6 +150,9 @@ def update_song_links(obj,info,song):
             "success":True,
             "ids":ids
         }
+        songl = Song.query.get(song.get(id))
+        setattr(songl,"link",song.get("link"))
+        db.session.commit()
     except Exception as error:
         payload = {
             "success":False,

@@ -51,25 +51,24 @@ function App() {
   }
  const getAllData = React.useCallback(async (user,excludes=[])=>{
     const q = `
-    query Songs($filters:songFilters!) {
-      listSongs(filters:$filters){
-        errors,
+    query pureSongs($filters:pureSongFilters!){
+      listPureSongs(filters:$filters){
         success,
+        errors,
         songs{
-          id,
           song_id,
           title,
-          release,
           artist_name,
+          release,
+          year,
           link,
-          year
         }
       }
     }
     `; 
      query(q, { filters: { search: search, filter: filter, offset:offset,limit:limit } }, user, (d) => {
-      if (d.listSongs.success) {
-        let data = d.listSongs.songs;
+      if (d.listPureSongs.success) {
+        let data = d.listPureSongs.songs;
         if(excludes){
           data = data.filter((v)=>{
             return  !excludes.includes(v.song_id);
@@ -79,6 +78,7 @@ function App() {
       }
     });
   },[filter,offset,search]);
+
   const getRatedData = async (user,excludes=[])=>{
     const q = `
     query Songs($filters:songFilters!) {
@@ -344,6 +344,7 @@ function App() {
   return (
     <UserContext.Provider value={[user, setUser]}>
       <div className="App">
+        
         <Login />
         {(user && user.role == 1)?<>new song</>:"" }
         {user && (

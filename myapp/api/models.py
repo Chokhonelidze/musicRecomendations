@@ -35,6 +35,25 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
+class Song(db.Model):
+    song_id = db.Column(db.Integer,primary_key=True)
+    title = db.Column(db.String)
+    release = db.Column(db.String)
+    artist_name = db.Column(db.String)
+    year = db.Column(db.Integer)
+    link = db.Column(db.String)
+    def to_dict(self):
+        return {
+            "song_id":self.song_id,
+            "title":self.title,
+            "release":self.release,
+            "artist_name":self.artist_name,
+            "year":self.year,
+            "link":self.link
+        }
+with app.app_context():
+    db.create_all()
+
 class Songs(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     user_id = db.Column(db.Integer)
@@ -65,7 +84,7 @@ with app.app_context():
         data =pd.read_csv("/usr/local/src/webapp/src/api/"+filename)
         
         for index,row in data.iterrows():
-            song = Songs(
+            songs = Songs(
                 id=row[0],
                 user_id = row[1],
                 song_id = row[2],
@@ -87,7 +106,16 @@ with app.app_context():
                     created_at=today.strftime("%Y-%m-%d %H:%M:%S")
                     )
                 db.session.add(userI)
-
-            db.session.add(song)
+            fsong = Song.query.get(row[2])
+            if not fsong:
+                fsong = Song(
+                    song_id = row[2],
+                    title = row[4],
+                    release = row[5],
+                    artist_name = row[6],
+                    year = row[7]
+                    )
+                db.session.add(fsong)
+            db.session.add(songs)
         db.session.commit()
     
