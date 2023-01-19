@@ -41,7 +41,7 @@ function App() {
       }
       `;
         let newlink = `//www.youtube.com/embed/${videos[0].id.videoId}?autoplay=1&mute=0`;
-        query(q,{"song":{id:id,link:newlink}},user,(d)=>{ 
+        query(q,{"song":{id:parseInt(id),link:newlink}},user,(d)=>{ 
           console.log(videos[0]);
           console.log(d);
         })
@@ -78,7 +78,7 @@ function App() {
         setData(data);
       }
     });
-  });
+  },[filter,offset,search]);
   const getRatedData = async (user,excludes=[])=>{
     const q = `
     query Songs($filters:songFilters!) {
@@ -165,7 +165,9 @@ function App() {
                 await query(q,{"id":v.id},user,(data)=>{
                   console.log(data);
                     if(data.getSong.success){
-                      allData.push(data.getSong.song);
+                      let song = data.getSong.song
+                      song['predict'] = v.score;
+                      allData.push(song);
                       ids.push(v.song_id);
                     }
                   });
@@ -253,8 +255,14 @@ function App() {
        
       function mergeData(newData) {
         setOffset(newOffset);
+        
         if(newData.listSongs.songs && newData.listSongs.songs.length > 0) {
-          setData([...data,...newData.listSongs.songs]);
+          let allData = [...data,...newData.listSongs.songs];
+          console.log(allData);
+          allData = allData.filter((val)=>{
+            return !excludememo.includes(val.song_id);
+          })
+          setData(allData);
         }
       }
       let parameters = {
@@ -267,7 +275,7 @@ function App() {
         query(q,{filters:parameters},user,mergeData);
       }
      
-    }, [data, setData, limit,filter,offset,search]);
+    }, [props.dataSet]);
     let alldata = data.map((val, index) => {
       return (
         <Card
@@ -276,7 +284,7 @@ function App() {
           header={val.artist_name}
           text={val.release + " " + val.year}
           song={val}
-          style=""
+          style=" "
           excludememo={excludememo}
           setExcludememo={setExcludememo}
           videoSearch = {videoSearch}
@@ -315,6 +323,7 @@ function App() {
         setExcludememo={setExcludememo}
         videoSearch = {videoSearch}
         refresh = {load}
+        predict = {val.predict}
       />);
       });
     }
@@ -336,6 +345,7 @@ function App() {
     <UserContext.Provider value={[user, setUser]}>
       <div className="App">
         <Login />
+        {(user && user.role == 1)?<>new song</>:"" }
         {user && (
           <NavBar
             filter={[filter, setFilter]}

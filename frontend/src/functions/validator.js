@@ -23,7 +23,7 @@ export function validator(field, type) {
             )
         ) {
           let message = {
-            email: "Wrong email",
+            password: "Wrong email",
           };
           throw message;
         }

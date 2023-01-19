@@ -69,11 +69,12 @@ export function Card(props) {
         }
     }
     return(
-        <div className={style} onClick={()=>{searchVideo(`${props.title} ${props.header}`,props.song.id,props?.song?.link)}}>
+        <div className={style} onClick={()=>{searchVideo(`${props.title} ${props.header}`,props.song.song_id,props?.song?.link)}}>
             <div className="card-header">{props.header}</div>
             <div className="card-body text-dark">
                 <h5 className="card-title">{props.title}</h5>
                 <p className="card-text">{props.text}</p>
+                {props?.predict?<p><h6>Predicted Star:{Number(props.predict).toFixed(2)}</h6></p>:""}
             </div>
             <div className="card-footer">
                 <ReactStars 
