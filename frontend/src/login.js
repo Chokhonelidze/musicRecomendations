@@ -160,7 +160,7 @@ export function Login() {
                 <br/>
                 <input 
                     type="submit"
-                    className="btn btn-primary"
+                    className="btn btn-primary loginButton"
                     value = "Create Account"
                     onClick={(e)=>{
                         try{
@@ -182,7 +182,7 @@ export function Login() {
                 <input 
                     type="button" 
                     value="Login"
-                    className="btn btn-primary"
+                    className="btn btn-primary loginButton"
                     onClick={(e)=>{
                         setCreateNew(false);
                     }}
@@ -220,14 +220,14 @@ export function Login() {
                   {hasErrors ? <>{error["login"]}</> : ""}
                 </h5>
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-primary loginButton"
                   type="submit"
                   onClick={login}
                 >
                   LOGIN
                 </button>
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-primary loginButton"
                   type="submit"
                   onClick={() => {
                     setCreateNew(true);

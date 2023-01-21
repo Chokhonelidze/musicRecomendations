@@ -3,3 +3,10 @@
     align-items: center;
     justify-content: center;
 }
+
+.loginButton {
+    margin: 5px;
+    border-radius: 3%;
+    background-color: cornflowerblue;
+    min-width: 200px;
+}
