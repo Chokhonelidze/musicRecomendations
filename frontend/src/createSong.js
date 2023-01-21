@@ -185,7 +185,7 @@ export function CreateSong() {
                                 onChange={(e)=>{
                                     try {
                                         setLink(e.target.value);
-                                        validator(link,"youtubeID");
+                                        validator(e.target.value,"youtubeID");
                                         let err = errors;
                                         err['youtubeID'] = ""
                                         setErrors(err);
