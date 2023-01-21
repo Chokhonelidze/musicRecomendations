@@ -22,7 +22,7 @@ def get_recommendations(data, user_id, top_n, algo):
         
         # Predicting the ratings for those non visited restaurant ids by this user
         est = algo.predict(user_id,item_id).est
-        
+
         # Appending the predicted ratings
         recommendations.append({"id":item_id,"score":est})
 
@@ -34,6 +34,8 @@ def get_recommendations(data, user_id, top_n, algo):
 def predict_songs_resolver(obj,info,query):
     try:
         gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=5, verbose=False)
+        gs_optimized_item = KNNBasic(sim_options={'name':'pearson_baseline','user_based': False},random_state = 1, k=30, min_k=5, verbose=False)
+
         df = pd.read_sql_table('songs',con=db.get_engine(),index_col='id')
         print(df.head())
         #df = pd.read_csv('final_data.csv')
@@ -41,14 +43,17 @@ def predict_songs_resolver(obj,info,query):
         data = Dataset.load_from_df(df[['user_id', 'song_id', 'play_count']], reader) 
         trainset = data.build_full_trainset()
         gs_optimized.fit(trainset)
+        gs_optimized_item.fit(trainset)
         #p_play_count_play = gs_optimized.predict(query['user_id'],query["song_id"],verbose=True)
         #print(p_play_count_play)
         df_rating=df.drop_duplicates()
-        recommendations =get_recommendations(df_rating,query.get("user_id"),5,gs_optimized)
-        print(recommendations)
+        recommendations =get_recommendations(df_rating,query.get("user_id"),3,gs_optimized)
+        recommendations2 =get_recommendations(df_rating,query.get("user_id"),3,gs_optimized_item)
+        print(recommendations+recommendations2)
+        frecommendations = recommendations + recommendations2
         payload = {
             "success":True,
-            "predict":recommendations
+            "predict":frecommendations
         }
     except Exception as error:
         payload = {
@@ -62,14 +67,24 @@ def predict_songs_resolver(obj,info,query):
 def list_songs_resolver(obj,info,filters=None):
     try:
         if filters.get('user'):
-            songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).order_by(desc(Songs.play_count)).limit(filters['limit']).offset(filters['offset']).all()];
+            if(filters.get("search")):
+                if filters['filter'] == 'title':
+                    songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.title.ilike("%"+filters['search']+"%"))).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
+                elif filters['filter'] == 'release':
+                    songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.release.ilike("%"+filters['search']+"%"))).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
+                elif filters['filter'] == 'artist_name':
+                    songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.artist_name.ilike("%"+filters['search']+"%"))).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
+                elif filters['filter'] == 'year':
+                    songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.year.ilike("%"+filters['search']+"%"))).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
+            else:
+                songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).order_by(desc(Songs.play_count)).limit(filters['limit']).offset(filters['offset']).all()];
         elif filters.get("search"):
             if filters['filter'] == 'title':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.title.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.title.ilike("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'release':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.release.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.release.ilike("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'artist_name':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.artist_name.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Songs.query.filter((Songs.artist_name.ilike("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'year':
                 songs =  [song.to_dict() for song in Songs.query.filter((Songs.year.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
 

@@ -90,7 +90,7 @@ export function CreateSong() {
                                 onChange={(e)=>{
                                     try {
                                         setTitle(e.target.value);
-                                        validator(title,"name");
+                                        validator(e.target.value,"name");
                                         let err = errors;
                                         err['title'] = ""
                                         setErrors(err);
@@ -114,7 +114,7 @@ export function CreateSong() {
                                 onChange={(e)=>{                           
                                     try {
                                         setArtist_name(e.target.value);
-                                        validator(artist_name,"name");
+                                        validator(e.target.value,"name");
                                         let err = errors;
                                         err['artist_name'] = ""
                                         setErrors(err);
@@ -161,7 +161,7 @@ export function CreateSong() {
                                 onChange={(e)=>{
                                     try {
                                         setYear(e.target.value);
-                                        validator(year,"year");
+                                        validator(e.target.value,"year");
                                         let err = errors;
                                         err['year'] = ""
                                         setErrors(err);

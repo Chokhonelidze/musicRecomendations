@@ -219,6 +219,7 @@ function App() {
       setOffset(0);
       const timer = setTimeout(() => {
         getAllData(user,excludememo);
+        getRatedData(user);
        
       }, 2000)
       return () => clearTimeout(timer)
@@ -341,7 +342,7 @@ function App() {
     },[loadMore])
     return (
       <div className="mid_container">
-        {recommended}
+        {search?"":recommended}
         {userD}
         {alldata}
       </div>

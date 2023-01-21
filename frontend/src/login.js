@@ -107,7 +107,7 @@ export function Login() {
                   onChange={(e) => {
                     try {
                       setCreateUser(e.target.value);
-                      validator(createUser, "email");
+                      validator(e.target.value, "email");
                       let errors = error;
                       errors["createEmail"] = "";
                       setError(errors);
@@ -134,7 +134,7 @@ export function Login() {
                   onChange={(e) => {
                     try {
                         setCreatePassword(e.target.value);
-                        validator(createPassword,"password");
+                        validator(e.target.value,"password");
                         let errors = error;
                         errors["createEmail"] = "";
                         setError(errors);
