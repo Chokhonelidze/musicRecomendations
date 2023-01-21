@@ -9,13 +9,13 @@ def list_songs_resolver(obj,info,filters=None):
             songs = [song.to_dict() for song in Song.query.limit(filters['limit']).offset(filters['offset']).all()];
         elif filters.get("search"):
             if filters['filter'] == 'title':
-                songs =  [song.to_dict() for song in Song.query.filter((Song.title.like("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Song.query.filter((Song.title.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'release':
-                songs =  [song.to_dict() for song in Song.query.filter((Song.release.like("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Song.query.filter((Song.release.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'artist_name':
-                songs =  [song.to_dict() for song in Song.query.filter((Song.artist_name.like("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Song.query.filter((Song.artist_name.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'year':
-                songs =  [song.to_dict() for song in Song.query.filter((Song.year.like("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Song.query.filter((Song.year.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
 
         else:
              songs =  [song.to_dict() for song in Song.query.limit(filters['limit']).offset(filters['offset']).all()] 

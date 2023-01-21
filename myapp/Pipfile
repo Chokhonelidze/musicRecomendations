@@ -8,7 +8,7 @@ flask = "*"
 ariadne = "*"
 flask-sqlalchemy = "*"
 flask-cors = "*"
-psycopg2 = "*"
+psycopg2-binary = "*"
 pandas = "*"
 surprise = "*"
 numpy = "*"
@@ -17,3 +17,4 @@ numpy = "*"
 
 [requires]
 python_version = "3.9"
+

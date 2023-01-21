@@ -33,8 +33,8 @@ def get_recommendations(data, user_id, top_n, algo):
 @convert_kwargs_to_snake_case
 def predict_songs_resolver(obj,info,query):
     try:
-        gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=9, verbose=False)
-        df = pd.read_sql_table('Songs',con=db.get_engine(),index_col='id')
+        gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=5, verbose=False)
+        df = pd.read_sql_table('songs',con=db.get_engine(),index_col='id')
         print(df.head())
         #df = pd.read_csv('final_data.csv')
         reader = Reader(rating_scale=(0,5))
@@ -112,22 +112,29 @@ queries = {"listSongs":list_songs_resolver,
 @convert_kwargs_to_snake_case
 def create_song_resolver(obj,info,song):
     try:
-        songI = Songs(
-            user_id = song['user_id'],
-            song_id = song['song_id'],
-            play_count = song['play_count'],
-            title = song['title'],
-            release = song['release'],
-            artist_name = song['artist_name'],
-            link = song['link'],
-            year = song['year'] 
-        )
-        db.session.add(songI)
-        db.session.commit()
-        payload = {
-            "success": True,
-            "song": songI.to_dict()
-        }
+        songf = Songs.query.filter((Songs.user_id  == song['user_id']) & (Songs.song_id == song['song_id'])).first();
+        if not songf:
+            songI = Songs(
+                user_id = song['user_id'],
+                song_id = song['song_id'],
+                play_count = song['play_count'],
+                title = song['title'],
+                release = song['release'],
+                artist_name = song['artist_name'],
+                link = song['link'],
+                year = song['year'] 
+            )
+            db.session.add(songI)
+            db.session.commit()
+            payload = {
+                "success": True,
+                "song": songI.to_dict()
+            }
+        else:
+            payload = {
+                "success":False,
+                "errors":["user already has song"]
+            }
     except Exception as error:
         payload = {
             "success":False,
@@ -150,7 +157,7 @@ def update_song_links(obj,info,song):
             "success":True,
             "ids":ids
         }
-        songl = Song.query.get(song.get(id))
+        songl = Song.query.get(song.get("id"))
         setattr(songl,"link",song.get("link"))
         db.session.commit()
     except Exception as error:

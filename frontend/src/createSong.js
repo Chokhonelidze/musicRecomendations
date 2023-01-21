@@ -5,27 +5,31 @@ import { query } from "./functions/queries";
 import "./createSong.css";
 
 export function CreateSong() {
-    const [title,setTitle] = React.useState("");
-    const [artist_name,setArtist_name] = React.useState("");
-    const [link,setLink] = React.useState("");
-    const [release,setRelease] = React.useState("");
-    const [year,setYear] = React.useState("");
+
     const [user, setUser] = React.useContext(UserContext);
     const [showNewSong,setShowNew] = React.useState(false);
-    const [errors,setErrors] = React.useState({});
-    const [hasErrors,setHasErrors] = React.useState(false);
 
-
-    function Form(props) {
+    function Form() {
+        const [title,setTitle] = React.useState("");
+        const [artist_name,setArtist_name] = React.useState("");
+        const [link,setLink] = React.useState("");
+        const [release,setRelease] = React.useState("");
+        const [year,setYear] = React.useState("");
+        const [errors,setErrors] = React.useState({});
+        const [hasErrors,setHasErrors] = React.useState(false);
         function sumbitSong() {
             try{
+                /*
                 validator(title,"name");
                 validator(artist_name,"name");
                 validator(link,"youtubeID");
                 validator(release,"name");
                 validator(year,"year");
+                */
+                console.log("success")
                 let allErrors = errors;
                 allErrors['main'] = "";
+                setErrors(allErrors);
                 setHasErrors(false);
                 const q =`
                 mutation CreateNewSong($song:createPureSong){
@@ -45,27 +49,27 @@ export function CreateSong() {
                 query(q,{song:{
                     "title":title,
                     "artist_name":artist_name,
-                    "link":link,
+                    "link":`//www.youtube.com/embed/${link}?autoplay=1&mute=0`,
                     "release":release,
-                    "year":year,
+                    "year":parseInt(year),
                 }},user,(d)=>{
                     console.log(d);
-                    if(d.pureSongResult.errors) {
-                        let errs = d.pureSongResult.errors.join(" ");
-                        setErrors(errs);
-                        setHasErrors(true);
+                    if(d.createNewPureSong?.errors) {
+                        let errs = d.createNewPureSong.errors.join(" ");
+                        let allErrs = errors;
+                        allErrs["main"] = errs;
+                        setErrors(allErrs);
+                        setHasErrors(true);        
                     }
                     else {
                         setErrors({});
                         setHasErrors(false);
+                        setShowNew(false);
                     }
                 })
             }
             catch(err) {
-                let errs = errors;
-                errs['artist_name'] = err;
-                setErrors(errs);
-                setHasErrors(true);
+                console.log(err);
             }
 
         }
@@ -99,6 +103,10 @@ export function CreateSong() {
                                         setHasErrors(true);
                                     }
                                 }} />
+                                <br/>
+                                <h5 className="text-danger">
+                                    {hasErrors ? <>{errors["title"]}</> : ""}
+                                </h5>
                     Artist Name: <input type="text" 
                                 value={artist_name} 
                                 name="artist_name" 
@@ -119,14 +127,17 @@ export function CreateSong() {
                                         setHasErrors(true);
                                     }
                                 }} />
+                                <br/>
+                                <h5 className="text-danger">
+                                    {hasErrors ? <>{errors["artist_name"]}</> : ""}
+                                </h5>
                     Release: <input type="text" 
                                 value={release} 
-                                name="title" 
+                                name="release" 
                                 className="form-control" 
                                 onChange={(e)=>{                                 
                                     try {
                                         setRelease(e.target.value);
-                                        validator(release,"name");
                                         let err = errors;
                                         err['release'] = ""
                                         setErrors(err);
@@ -139,6 +150,10 @@ export function CreateSong() {
                                         setHasErrors(true);
                                     }
                                 }} />
+                                <br/>
+                                <h5 className="text-danger">
+                                    {hasErrors ? <>{errors["release"]}</> : ""}
+                                </h5>
                     Year: <input type="text" 
                                 value={year} 
                                 name="artist_name" 
@@ -159,6 +174,10 @@ export function CreateSong() {
                                         setHasErrors(true);
                                     }
                                 }} />
+                                <br/>
+                                <h5 className="text-danger">
+                                    {hasErrors ? <>{errors["year"]}</> : ""}
+                                </h5>
                     Video ID: <input type="text" 
                                 value={link} 
                                 name="artist_name" 
@@ -179,6 +198,14 @@ export function CreateSong() {
                                         setHasErrors(true);
                                     }
                                 }} />
+                                <br/>
+                                <h5 className="text-danger">
+                                    {hasErrors ? <>{errors["youtubeID"]}</> : ""}
+                                </h5>
+                                <br/>
+                                <h5 className="text-danger">
+                                    {hasErrors ? <>{errors["main"]}</> : ""}
+                                </h5>
                         <input type="submit" 
                         value="Create Song" 
                         className="btn btn-primary" 
@@ -193,7 +220,7 @@ export function CreateSong() {
     let view = "";
     if(user?.role === 1) {
         if(showNewSong) {
-            view = <Form />
+            view = <Form  />
         }
         else {
             view = <input type="button" value="Add New Song" className="btn btn-primary" onClick={()=>{setShowNew(true)}} />

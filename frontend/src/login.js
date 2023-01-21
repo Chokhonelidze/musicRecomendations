@@ -29,7 +29,8 @@ export function Login() {
     `;
     query(q,{"user":{email:createUser,password:createPassword,role:0}},user, (obj)=>{
         if(obj.createUser.user){
-            setUser(obj.login.user);
+          console.log(obj);
+            setUser(obj.createUser.user);
             setError({});
             setHasErrors(false);
         }
@@ -160,6 +161,7 @@ export function Login() {
                 <input 
                     type="submit"
                     className="btn btn-primary"
+                    value = "Create Account"
                     onClick={(e)=>{
                         try{
                             validator(createUser,"email");
@@ -179,6 +181,7 @@ export function Login() {
                     }} />
                 <input 
                     type="button" 
+                    value="Login"
                     className="btn btn-primary"
                     onClick={(e)=>{
                         setCreateNew(false);
@@ -223,7 +226,6 @@ export function Login() {
                 >
                   LOGIN
                 </button>
-                <br />
                 <button
                   className="btn btn-primary"
                   type="submit"

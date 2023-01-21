@@ -14,7 +14,7 @@ services:
       - '5000:5000'
     image: chokhonelidze/backend:latest
     environment:
-      - DB=mongodb://mongo:27017/app_development
+      - DB=postgresql://postgres:postgres@postgres:5432/postgres
       - APOLLO_KEY=service:Python-nrgjdu:••••••••••••••••••••••
       - APOLLO_GRAPH_REF=Python-nrgjdu@current
       - APOLLO_SCHEMA_REPORTING=true
@@ -25,8 +25,9 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
-      - '5438:5432'
+      - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
 volumes:

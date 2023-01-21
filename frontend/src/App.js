@@ -70,9 +70,11 @@ function App() {
      query(q, { filters: { search: search, filter: filter, offset:offset,limit:limit } }, user, (d) => {
       if (d.listPureSongs.success) {
         let data = d.listPureSongs.songs;
+        console.log(excludes);
+        console.log(data);
         if(excludes){
           data = data.filter((v)=>{
-            return  !excludes.includes(v.song_id);
+            return  !excludes.includes(parseInt(v.song_id));
           });
         }
         setData(data);
@@ -214,8 +216,12 @@ function App() {
   }
   React.useEffect(() => {
     if(search.length > 0 && user){
-      getAllData(user,excludememo);
       setOffset(0);
+      const timer = setTimeout(() => {
+        getAllData(user,excludememo);
+       
+      }, 2000)
+      return () => clearTimeout(timer)
     }
     else{
       load()
@@ -230,18 +236,17 @@ function App() {
        */
       const [data,setData] = props.dataSet;
       const q = `
-      query Songs($filters:songFilters!) {
-        listSongs(filters:$filters){
-          errors,
+      query pureSongs($filters:pureSongFilters!){
+        listPureSongs(filters:$filters){
           success,
+          errors,
           songs{
-            id,
             song_id,
             title,
-            release,
             artist_name,
+            release,
+            year,
             link,
-            year
           }
         }
       }
@@ -257,11 +262,11 @@ function App() {
       function mergeData(newData) {
         setOffset(newOffset);
         
-        if(newData.listSongs.songs && newData.listSongs.songs.length > 0) {
-          let allData = [...data,...newData.listSongs.songs];
+        if(newData.listPureSongs.songs && newData.listPureSongs.songs.length > 0) {
+          let allData = [...data,...newData.listPureSongs.songs];
           console.log(allData);
           allData = allData.filter((val)=>{
-            return !excludememo.includes(val.song_id);
+            return !excludememo.includes(parseInt(val.song_id));
           })
           setData(allData);
         }
@@ -348,7 +353,6 @@ function App() {
         
         <Login />
         <CreateSong />
-        {(user && user.role == 1)?<>new song</>:"" }
         {user && (
           <NavBar
             filter={[filter, setFilter]}
