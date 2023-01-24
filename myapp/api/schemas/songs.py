@@ -22,7 +22,8 @@ type songResult {
 }
 type prediction {
     id:ID,
-    score:String
+    score:String,
+    common:Boolean,
 }
 type predictOutput {
     success: Boolean!,

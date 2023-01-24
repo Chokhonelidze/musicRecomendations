@@ -5,9 +5,7 @@ from api import db
 @convert_kwargs_to_snake_case
 def list_songs_resolver(obj,info,filters=None):
     try:
-        if filters.get('user'):
-            songs = [song.to_dict() for song in Song.query.limit(filters['limit']).offset(filters['offset']).all()];
-        elif filters.get("search"):
+        if filters.get("search"):
             if filters['filter'] == 'title':
                 songs =  [song.to_dict() for song in Song.query.filter((Song.title.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'release':
@@ -15,7 +13,7 @@ def list_songs_resolver(obj,info,filters=None):
             elif filters['filter'] == 'artist_name':
                 songs =  [song.to_dict() for song in Song.query.filter((Song.artist_name.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'year':
-                songs =  [song.to_dict() for song in Song.query.filter((Song.year.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Song.query.filter_by(year=filters['search']).limit(filters['limit']).offset(filters['offset']).all()]
 
         else:
              songs =  [song.to_dict() for song in Song.query.limit(filters['limit']).offset(filters['offset']).all()] 

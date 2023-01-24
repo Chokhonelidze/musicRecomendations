@@ -6,6 +6,7 @@ from sqlalchemy import text,desc
 from surprise.dataset import Dataset
 from surprise.prediction_algorithms.knns import KNNBasic
 import pandas as pd
+
 def get_recommendations(data, user_id, top_n, algo):
     
     # Creating an empty list to store the recommended product ids
@@ -49,11 +50,26 @@ def predict_songs_resolver(obj,info,query):
         df_rating=df.drop_duplicates()
         recommendations =get_recommendations(df_rating,query.get("user_id"),3,gs_optimized)
         recommendations2 =get_recommendations(df_rating,query.get("user_id"),3,gs_optimized_item)
-        print(recommendations+recommendations2)
         frecommendations = recommendations + recommendations2
+        
+        obj = {}
+        for song in frecommendations:
+            if song["id"] in obj:
+                obj[song["id"]]['common'] = True
+            else:
+                obj[song["id"]] = {
+                    "score":song['score'],
+                    "common": False
+                }
+        print(obj)
+      
+        finalfrecommendations = []
+        for k in obj.keys():
+            finalfrecommendations.append({"id":k,"score":obj[k]["score"],"common":obj[k]["common"]})
+        print(finalfrecommendations)
         payload = {
             "success":True,
-            "predict":frecommendations
+            "predict":finalfrecommendations
         }
     except Exception as error:
         payload = {
@@ -75,7 +91,7 @@ def list_songs_resolver(obj,info,filters=None):
                 elif filters['filter'] == 'artist_name':
                     songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.artist_name.ilike("%"+filters['search']+"%"))).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
                 elif filters['filter'] == 'year':
-                    songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.year.ilike("%"+filters['search']+"%"))).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
+                    songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.year == filters['search'])).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
             else:
                 songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).order_by(desc(Songs.play_count)).limit(filters['limit']).offset(filters['offset']).all()];
         elif filters.get("search"):
@@ -86,7 +102,7 @@ def list_songs_resolver(obj,info,filters=None):
             elif filters['filter'] == 'artist_name':
                 songs =  [song.to_dict() for song in Songs.query.filter((Songs.artist_name.ilike("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'year':
-                songs =  [song.to_dict() for song in Songs.query.filter((Songs.year.like("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
+                songs =  [song.to_dict() for song in Songs.query.filter_by( (Songs.year==filters['search']) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
 
         else:
              songs =  [song.to_dict() for song in Songs.query.group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()] 

@@ -136,7 +136,8 @@ function App() {
         errors,
         predict{
           id,
-          score
+          score,
+          common
         }
       }
     }
@@ -170,6 +171,7 @@ function App() {
                     if(data.getSong.success){
                       let song = data.getSong.song
                       song['predict'] = v.score;
+                      song['common'] = v.common;
                       allData.push(song);
                       ids.push(v.song_id);
                     }
@@ -325,7 +327,7 @@ function App() {
         header={val.artist_name}
         text={val.release + " " + val.year}
         song={val}
-        style={'predicted'}
+        style={val.common?"special":"predicted"}
         excludememo={excludememo}
         setExcludememo={setExcludememo}
         videoSearch = {videoSearch}
