@@ -321,9 +321,8 @@ function App() {
       });
     }
     let recommended = "";
-    if(props.recommendedData) {
-      console.log(props.recommendedData);
-      recommended = props.recommendedData.map((val,index)=>{
+
+    recommended= React.useMemo(props.recommendedData.map((val,index)=>{
        return (<Card
         key={"recommended_key_" + index}
         title={val.title}
@@ -337,8 +336,8 @@ function App() {
         refresh = {load}
         predict = {val.predict}
       />);
-      });
-    }
+      }),props.recommendedData);
+    
     React.useEffect(()=>{
       window.addEventListener("scroll", loadMore);
       return () => {
