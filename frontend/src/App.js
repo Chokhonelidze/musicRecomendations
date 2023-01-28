@@ -51,6 +51,7 @@ function App() {
     }
   }
  const getAllData = React.useCallback(async (user,excludes=[])=>{
+  console.log("all data is running")
     const q = `
     query pureSongs($filters:pureSongFilters!){
       listPureSongs(filters:$filters){
@@ -222,6 +223,7 @@ function App() {
       const timer = setTimeout(() => {
         getAllData(user,excludememo);
         getRatedData(user);
+        setSearch("");
        
       }, 2000)
       return () => clearTimeout(timer)
@@ -233,10 +235,11 @@ function App() {
 
   
   function View(props) {
-    const loadMore = React.useCallback(() => {
+    const loadMore = () => {
       /**
        *  this is the callback function used for data load.
        */
+
       const [data,setData] = props.dataSet;
       const q = `
       query pureSongs($filters:pureSongFilters!){
@@ -284,7 +287,7 @@ function App() {
         query(q,{filters:parameters},user,mergeData);
       }
      
-    }, [props.dataSet]);
+    }
     let alldata = data.map((val, index) => {
       return (
         <Card
