@@ -50,7 +50,7 @@ function App() {
       })
     }
   }
- const getAllData = React.useCallback(async (user,excludes=[])=>{
+ const getAllData = async (user,excludes=[])=>{
   console.log("all data is running")
     const q = `
     query pureSongs($filters:pureSongFilters!){
@@ -81,9 +81,10 @@ function App() {
         setData(data);
       }
     });
-  },[filter,offset,search]);
+  }
 
   const getRatedData = async (user,excludes=[])=>{
+    console.log("rated data is runing")
     const q = `
     query Songs($filters:songFilters!) {
       listSongs(filters:$filters){
@@ -179,7 +180,6 @@ function App() {
                   });
 
                 });
-                console.log(allData);
                 setPredictions(allData);
               }
               }
@@ -221,10 +221,10 @@ function App() {
     if(search.length > 0 && user){
       setOffset(0);
       const timer = setTimeout(() => {
-        getAllData(user,excludememo);
+        setUserData([]);
         getRatedData(user);
-        setSearch("");
-       
+        getAllData(user,excludememo);
+        console.log("refresh started");
       }, 2000)
       return () => clearTimeout(timer)
     }
@@ -334,7 +334,12 @@ function App() {
         excludememo={excludememo}
         setExcludememo={setExcludememo}
         videoSearch = {videoSearch}
-        refresh = {load}
+        refresh = {()=>{
+          setData([]);
+          setPredictions([]);
+          setUserData([]);
+          load()
+        }}
         predict = {val.predict}
       />);
       });

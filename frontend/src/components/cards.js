@@ -61,17 +61,19 @@ export function Card(props) {
                 "year":props.song.year
             }},user,(data)=>{
                 console.log(data);
-                if(props.refresh){
-                  props.refresh();
-                }
-            })
+            
+            }).then(()=>{
+              if(props?.refresh){
+                props.refresh();
+              }
+            });
 
         }
     }
     return(
-        <div className={style} onClick={()=>{searchVideo(`${props.title} ${props.header}`,props.song.song_id,props?.song?.link)}}>
+        <div className={style} >
             <div className="card-header">{props.header}</div>
-            <div className="card-body text-dark">
+            <div className="card-body text-dark" style={{cursor:'pointer'}}  onClick={()=>{searchVideo(`${props.title} ${props.header}`,props.song.song_id,props?.song?.link)}}>
                 <h5 className="card-title">{props.title}</h5>
                 <p className="card-text">{props.text}</p>
                 {props?.predict?<h6>Predicted Star:{Number(props.predict).toFixed(2)}</h6>:""}
