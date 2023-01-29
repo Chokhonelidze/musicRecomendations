@@ -1,6 +1,7 @@
 from ..models import User
 from ariadne import convert_kwargs_to_snake_case
-from datetime import date
+from datetime import date 
+from passlib.hash import sha256_crypt
 from api import db
 @convert_kwargs_to_snake_case
 def login(obj,info,query):
@@ -9,7 +10,7 @@ def login(obj,info,query):
     print(email,password);
     user = User.query.filter_by(email=email).first()
     print(user)
-    if user:
+    if user and sha256_crypt.verify(password, user.password):
         payload = {
             "success": True,
             "user":user.to_dict()
@@ -65,7 +66,7 @@ def create_user_resolver(obj,info,user):
             }
         userI = User(
             email=user['email'],
-            password=user['password'],
+            password=sha256_crypt.encrypt(user['password']),
             role=user['role'],
             created_at=today.strftime("%Y-%m-%d %H:%M:%S")
         )
@@ -122,9 +123,31 @@ def delete_user_resolver(obj,info,id):
         }
     return payload
 
-mutations = {"createUser":create_user_resolver,
+"""
+@convert_kwargs_to_snake_case
+def encrypt_all_users(obj,info):
+    try:
+        users = User.query.all()
+        for user in users:
+            user.password = sha256_crypt.encrypt(user.password)
+            db.session.add(user)
+        db.session.commit()
+        payload ={
+            "success":True,
+            "errors":[]
+        }
+    except Exception as error:
+        payload ={
+            "success":False,
+            "errors": [str(error)]
+        }
+    return payload
+"""
+mutations = {
+    "createUser":create_user_resolver,
     "updateUser":update_user_resolver,
-    "deleteUser":delete_user_resolver}
+    "deleteUser":delete_user_resolver
+    }
 
 User_resolver = {
     "queries":queries,

@@ -6,15 +6,15 @@ name = "pypi"
 [packages]
 flask = "*"
 ariadne = "*"
-flask-sqlalchemy = "*"
+flask-sqlalchemy = "1.4.46"
 flask-cors = "*"
 psycopg2-binary = "*"
 pandas = "*"
 surprise = "*"
 numpy = "*"
+passlib = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.9"
-

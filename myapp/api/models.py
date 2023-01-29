@@ -2,6 +2,7 @@ from api import app, db
 from datetime import datetime
 import pandas as pd
 from datetime import date
+from passlib.hash import sha256_crypt
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -101,7 +102,7 @@ with app.app_context():
                 userI = User(
                     id = row[1],
                     email=email,
-                    password="123456",
+                    password=sha256_crypt.encrypt("123456"),
                     role=0,
                     created_at=today.strftime("%Y-%m-%d %H:%M:%S")
                     )

@@ -37,7 +37,8 @@ def predict_songs_resolver(obj,info,query):
         gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=5, verbose=False)
         gs_optimized_item = KNNBasic(sim_options={'name':'pearson_baseline','user_based': False},random_state = 1, k=30, min_k=5, verbose=False)
 
-        df = pd.read_sql_table('songs',con=db.get_engine(),index_col='id')
+        df = pd.read_sql_table('songs',db.get_engine(),index_col='id')
+        #df = pd.read_json(df,dtype=False)
         print(df.head())
         #df = pd.read_csv('final_data.csv')
         reader = Reader(rating_scale=(0,5))
