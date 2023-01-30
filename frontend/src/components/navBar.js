@@ -62,7 +62,7 @@ function FSearch(props) {
   let startOption  = {value:'title',label:'Title'}
   options = [startOption,...options];
   }
-  let dp = <Dropdown placeholder="Title" className="searchDropdown" options={options} onChange={(value) => setFilter(value.value)}/>
+  let dp = <Dropdown placeholder="Title" className="searchDropdown" options={options} onChange={(value) => {setFilter(value.value); setSearch("")}}/>
   let input = <input type='text' placeholder="Search" value={search}  className='searchInput rdn-control' onChange={(e)=>{
     setSearch(e.target.value);
     e.preventDefault();
