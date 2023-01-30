@@ -83,6 +83,7 @@ export function Login() {
         <div
           onClick={() => {
             setUser(null);
+            window.location.reload(false);
           }}
         >
           <button className="btn btn-primary" type="button">
