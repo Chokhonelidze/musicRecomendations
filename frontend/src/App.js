@@ -358,6 +358,11 @@ function App() {
       </div>
     );
   }
+  const ViewMemo = React.useMemo(()=>{
+  return <View dataSet={[data,setData]} 
+                userData={userData} 
+                recommendedData={predictions} />}
+                ,[data,userData,predictions]);
   return (
     <UserContext.Provider value={[user, setUser]}>
       <div className="App">
@@ -372,7 +377,7 @@ function App() {
           />
         )}
         {video && user?<iframe src={video} name="youtube embed" allow="autoplay; encrypted-media" autoPlay="1"> </iframe>:""}
-        {user && data && <View dataSet={[data,setData]} userData={userData} recommendedData={predictions} />}
+        {user && data && ViewMemo}
       </div>
     </UserContext.Provider>
   );
