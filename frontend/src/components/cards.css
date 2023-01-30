@@ -12,3 +12,9 @@
 .special {
     background-color: gold;
 }
+.cards:hover {
+    border:2px solid #020202;
+    width:15rem;
+    height: 21rem;
+    margin: 4px;
+}
