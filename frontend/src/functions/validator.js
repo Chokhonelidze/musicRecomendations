@@ -52,7 +52,7 @@ export function validator(field, type) {
       return true;
     case "youtubeID":
       console.log(field.length);
-      if (field.length !== 12) {
+      if (field.length !== 11) {
         let message = {
           link: "link shiuld have 11 characters for example HVHUjzZZGQ4",
         };
