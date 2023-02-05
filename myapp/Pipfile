@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 flask = "*"
 ariadne = "*"
-flask-sqlalchemy = "1.4.46"
 flask-cors = "*"
 psycopg2-binary = "*"
 pandas = "*"
@@ -14,6 +13,8 @@ surprise = "*"
 numpy = "*"
 passlib = "*"
 pytube = "*"
+flask-sqlalchemy = "===3.0.2"
+sqlalchemy = "===1.4.46"
 
 [dev-packages]
 
