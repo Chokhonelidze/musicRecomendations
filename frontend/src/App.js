@@ -6,6 +6,7 @@ import { Card } from "./components/cards";
 import { CreateSong } from "./createSong";
 import "./App.css";
 import YTSearch from "youtube-api-search";
+import ReactPlayer from "react-player";
 const YOUTUBE_KEY  = process.env.REACT_APP_API_KEY_YT;
 
 const UserContext = React.createContext(null);
@@ -376,7 +377,14 @@ function App() {
             Page={offset}
           />
         )}
-        {video && user?<iframe src={video} name="youtube embed" allow="autoplay; encrypted-media" autoPlay="1"> </iframe>:""}
+        <div className="center">
+        {video && user?<ReactPlayer
+        url={video}
+        playing={true}
+        width={220}
+        height={220}
+        />:""}
+        </div>
         {user && data && ViewMemo}
       </div>
     </UserContext.Provider>
