@@ -63,8 +63,42 @@ def download_song_resolver(obj,info,link):
     os.rename(out_file, new_file)
     return new_file
 
+@convert_kwargs_to_snake_case
+def update_song_resolver(obj,info,song):
+    try:
+        assert(song.get('id'))
+        songI = Song.query.get(song.get('id'))
+        assert(songI)
+        if song.get('title'):
+            setattr(songI,"title",song.get('title'));
+        if(song.get('release')):
+            #songI['release'] = song.get('release')
+            setattr(songI,"release",song.get('release'));
+        if(song.get('artist_name')):
+            #songI['artist_name'] = song.get('artist_name')
+            setattr(songI,"artist_name",song.get('artist_name'));
+        if(song.get('link')):
+            #songI['link'] = song.get('link')
+            setattr(songI,"link",song.get('link'));
+        if(song.get('year')):
+            #songI['year'] = song.get('year')
+            setattr(songI,"year",song.get('year'));      
+        db.session.commit()
+        payload = {
+            "success":True,
+            "song":songI
+        }
+    except Exception as error:
+        payload = {
+            "success":False,
+            "errors":[str(error)]
+        }
+    return payload
+
+
 mutations = {
     "createNewPureSong":create_song_resolver,
+    "updatePureSong":update_song_resolver
 }
 queries = {
     "listPureSongs":list_songs_resolver,

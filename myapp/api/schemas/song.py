@@ -32,6 +32,14 @@ input pureSongFilters {
     limit:Int = 100,
     offset:Int = 0
 }
+input updatePureSong{
+    id:ID!
+    title:String,
+    release:String,
+    artist_name:String,
+    link:String,
+    year:Int
+}
 """
 query="""
 listPureSongs(filters:pureSongFilters!): pureSongsResult,
@@ -40,6 +48,7 @@ downloadSong(link:String!): String,
 
 mutation="""
 createNewPureSong(song:createPureSong):pureSongResult
+updatePureSong(song:updatePureSong!):pureSongResult
 """
 
 pureSongs = {
