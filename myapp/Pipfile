@@ -13,6 +13,7 @@ pandas = "*"
 surprise = "*"
 numpy = "*"
 passlib = "*"
+pytube = "*"
 
 [dev-packages]
 

@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask import send_file
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
@@ -30,6 +31,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 
-@app.route('/')
-def hello():
-    return 'My First API !!'
+
+@app.route('/downloads/<path:filename>',methods=['GET'])
+def downloadFile(filename):
+    path = "/downloads/"+filename
+    return send_file(path,as_attachment=True)

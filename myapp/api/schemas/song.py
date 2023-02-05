@@ -35,6 +35,7 @@ input pureSongFilters {
 """
 query="""
 listPureSongs(filters:pureSongFilters!): pureSongsResult,
+downloadSong(link:String!): String,
 """
 
 mutation="""
