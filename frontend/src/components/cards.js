@@ -34,8 +34,7 @@ export function Card(props) {
             let file = window.URL.createObjectURL(blob);
             a.href = file;
             let name = String(link).split('/');
-            name = name[name.length-1];
-            a.download = name;
+            a.download = props.title??"music";
             a.click();
             window.URL.revokeObjectURL(file);
           });
