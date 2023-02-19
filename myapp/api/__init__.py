@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
-CORS(app,resources={r"/grapql/": {"origins": ["http://myhome.smho.site:3000/","localhost:5000"]}})
+CORS(app,resources={r"/grapql/": {"origins": ["http://myhome.smho.site:3000/","localhost:5000","https://chokhonelidze.github.io/musicRecomendations"]}})
 
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -35,7 +35,7 @@ db = SQLAlchemy(app)
 
 
 @app.route('/downloads/<path:filename>',methods=['GET'])
-@cross_origin({"origins": ["http://myhome.smho.site:3000/","localhost:5000"]})
+@cross_origin({"origins": ["http://myhome.smho.site:3000/","localhost:5000","https://chokhonelidze.github.io/musicRecomendations"]})
 def downloadFile(filename):
     path = "/downloads/"+filename
     return send_file(path,as_attachment=True)
