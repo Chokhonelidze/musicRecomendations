@@ -3,16 +3,29 @@ import { query } from "../functions/queries";
 import ReactStars from "react-rating-stars-component";
 import { UserContext } from "../App";
 import React from "react";
-
+type data = {
+  createSong:{
+    success:boolean,
+    errors:[string],
+    song:{
+      title:string,
+      pay_count:number,
+      user_id:number,
+    }
+  }
+}
+type props = {
+  
+}
 export function Card(props) {
   const [user, setUser] = React.useContext(UserContext);
-  const download = async (link) => {
+  const download = async (link:string) => {
     const q = `
         query downloadSong($link:String!){
           downloadSong(link:$link)
         }
        `;
-    query(q, { link: link }, user, (data) => {
+    query(q, { link: link }, user, (data:data) => {
       const run = async () => {
         let headers = {
           "Content-Type": "application/json",
@@ -43,10 +56,10 @@ export function Card(props) {
     });
   };
   let style = `card border-primary mb-3 cards ${props?.style}`;
-  function searchVideo(term, id, link = null) {
+  function searchVideo(term:string, id:string, link = null) {
     props.videoSearch(term, id, link);
   }
-  function changeStar(newRating) {
+  function changeStar(newRating:number) {
     console.log(props.song);
     if (props.song.play_count) {
       const q = `
@@ -66,7 +79,7 @@ export function Card(props) {
         q,
         { song: { id: props.song.id, play_count: newRating } },
         user,
-        (data) => {
+        (data:data) => {
           console.log(data);
         }
       );
@@ -104,7 +117,7 @@ export function Card(props) {
           },
         },
         user,
-        (data) => {
+        (data:data) => {
           console.log(data);
         }
       ).then(() => {
