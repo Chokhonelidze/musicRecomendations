@@ -10,12 +10,13 @@ const server = process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER :"htt
  * @param {filter} props 
  * @returns {React.NavBar} NavBar
  */
-export function NavBar(props) {
-
-
-
-
-  let pageDisplay = null;
+type propstype= {
+  Page:number,
+  filter:string,
+  search:string
+}
+export function NavBar(props:propstype) {
+  let pageDisplay:null = null;
   
   return (
     <div className="navBar">
@@ -26,8 +27,13 @@ export function NavBar(props) {
     </div>
   );
 }
-function FSearch(props) {
-  const [dropdown,setDropdown] = React.useState('');
+type dropdown = {
+  value:string,
+  label:string,
+  color:string
+}
+function FSearch(props:propstype) {
+  const [dropdown,setDropdown]= React.useState<dropdown[]>([]);
   const [search,setSearch] = props.search;
   const [filter,setFilter] = props.filter;
   React.useEffect(()=>{
@@ -53,7 +59,7 @@ function FSearch(props) {
   if(dropdown){
    options = dropdown.map((item,index)=>{
     let colors = item.color
-    let style = {
+    let style:{key:string,value:string} = {
       color: `${colors}`,
     };
     let view = <h6 style={style}>{item.label}</h6>
