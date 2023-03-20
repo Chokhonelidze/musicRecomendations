@@ -4,9 +4,19 @@ import { validator } from "./functions/validator";
 import { query } from "./functions/queries";
 import "./createSong.css";
 
+interface errors {
+    main?:string|[string],
+    title?:string|[string],
+    name?:string|[string],
+    artist_name?:string|[string],
+    release?:string|[string],
+    year?:string|[string],
+    youtubeID?:string|[string],
+}
+
 export function CreateSong() {
 
-    const [user, setUser] = React.useContext(UserContext);
+    const [user] = React.useContext<any>(UserContext);
     const [showNewSong,setShowNew] = React.useState(false);
 
     function Form() {
@@ -15,7 +25,7 @@ export function CreateSong() {
         const [link,setLink] = React.useState("");
         const [release,setRelease] = React.useState("");
         const [year,setYear] = React.useState("");
-        const [errors,setErrors] = React.useState({});
+        const [errors,setErrors] = React.useState<errors>({main:""});
         const [hasErrors,setHasErrors] = React.useState(false);
         function sumbitSong() {
             try{
@@ -52,7 +62,7 @@ export function CreateSong() {
                     "link":`//www.youtube.com/embed/${link}?autoplay=1&mute=0`,
                     "release":release,
                     "year":parseInt(year),
-                }},user,(d)=>{
+                }},user,(d:any)=>{
                     console.log(d);
                     if(d.createNewPureSong?.errors) {
                         let errs = d.createNewPureSong.errors.join(" ");
@@ -62,7 +72,7 @@ export function CreateSong() {
                         setHasErrors(true);        
                     }
                     else {
-                        setErrors({});
+                        setErrors({main:""});
                         setHasErrors(false);
                         setShowNew(false);
                     }
@@ -96,7 +106,7 @@ export function CreateSong() {
                                         setErrors(err);
                                         setHasErrors(false);
                                     }
-                                    catch(err){
+                                    catch(err:any){
                                         let errs = errors;
                                         errs['title'] = err.name;
                                         setErrors(errs);
@@ -120,7 +130,7 @@ export function CreateSong() {
                                         setErrors(err);
                                         setHasErrors(false);
                                     }
-                                    catch(err){
+                                    catch(err:any){
                                         let errs = errors;
                                         errs['artist_name'] = err.name;
                                         setErrors(errs);
@@ -143,7 +153,7 @@ export function CreateSong() {
                                         setErrors(err);
                                         setHasErrors(false);
                                     }
-                                    catch(err){
+                                    catch(err:any){
                                         let errs = errors;
                                         errs['release'] = err.name;
                                         setErrors(errs);
@@ -167,7 +177,7 @@ export function CreateSong() {
                                         setErrors(err);
                                         setHasErrors(false);
                                     }
-                                    catch(err){
+                                    catch(err:any){
                                         let errs = errors;
                                         errs['year'] = err.year;
                                         setErrors(errs);
@@ -191,7 +201,7 @@ export function CreateSong() {
                                         setErrors(err);
                                         setHasErrors(false);
                                     }
-                                    catch(err){
+                                    catch(err:any){
                                         let errs = errors;
                                         errs['youtubeID'] = err.link;
                                         setErrors(errs);
@@ -217,7 +227,7 @@ export function CreateSong() {
 
         </div>);
     }
-    let view = "";
+    let view:JSX.Element | string = "";
     if(user?.role === 1) {
         if(showNewSong) {
             view = <Form  />

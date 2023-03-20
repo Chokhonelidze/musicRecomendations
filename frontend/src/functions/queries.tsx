@@ -1,13 +1,19 @@
-const server = process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER :"http://localhost:3000";
+const server:string = process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER :"http://localhost:3000";
+
+type user_type = {
+  email:string,
+  id:number,
+  role:number
+}
 
 /**
  * @description function is used to get pockemons from database.
  * @param {String} q 
  * @param {Array} values 
  * @param {Function} callback 
- * @returns {Array} pokemons
+ * @returns {Void} 
  */
-export async function query(q,values,user,callback) {
+export async function query(q:string,values:any,user:user_type,callback:Function): Promise<void>{
     let headers =  {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -27,7 +33,7 @@ export async function query(q,values,user,callback) {
         }),
       })
         .then((res) => res.json())
-        .then((info, err) => {
+        .then((info, err?: Array<{message: string}>) => {
              if(!err) {
                callback(info.data);
              }

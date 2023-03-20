@@ -1,4 +1,4 @@
-export function validator(field, type) {
+export function validator(field:string, type:string):boolean {
   switch (type) {
     case "name":
       if (field.length <= 2 || field.length > 30) {
@@ -43,7 +43,8 @@ export function validator(field, type) {
         };
         throw message;
       }
-      if (parseInt(field) > Date.getYear()) {
+      let now =  new Date().getFullYear();
+      if (parseInt(field) > now) {
         let message = {
           year: "Wrong Year",
         };
