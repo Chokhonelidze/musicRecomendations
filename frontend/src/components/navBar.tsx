@@ -1,21 +1,35 @@
 import React from "react";
 import "./navBar.css";
-
 import { Dropdown } from 'react-dropdown-now';
 import 'react-dropdown-now/style.css';
 const server = process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER :"http://localhost:4000/graphql";
+
+type dropdown_type = {
+  value:string,
+  label:string,
+  color:string
+}
+type props_type= {
+  Page?:number,
+  filter:any,
+  search:any
+}
+type options_type = {
+  //{value:item.value, view:view, label:view}
+  value?:string,
+  view?:JSX.Element,
+  label?:JSX.Element | string
+}
+
+
 /**
  * 
  * @description builds menu search and dropdown elements.
  * @param {filter} props 
  * @returns {React.NavBar} NavBar
  */
-type propstype= {
-  Page:number,
-  filter:string,
-  search:string
-}
-export function NavBar(props:propstype) {
+
+export function NavBar(props:props_type): JSX.Element {
   let pageDisplay:null = null;
   
   return (
@@ -27,13 +41,8 @@ export function NavBar(props:propstype) {
     </div>
   );
 }
-type dropdown = {
-  value:string,
-  label:string,
-  color:string
-}
-function FSearch(props:propstype) {
-  const [dropdown,setDropdown]= React.useState<dropdown[]>([]);
+function FSearch(props:props_type) {
+  const [dropdown,setDropdown]= React.useState<dropdown_type[]>([]);
   const [search,setSearch] = props.search;
   const [filter,setFilter] = props.filter;
   React.useEffect(()=>{
@@ -55,17 +64,17 @@ function FSearch(props:propstype) {
   }
   ])
   },[]);
-  let options =null;
+  let options:options_type[] = [];
   if(dropdown){
    options = dropdown.map((item,index)=>{
     let colors = item.color
-    let style:{key:string,value:string} = {
+    let style:React.CSSProperties = {
       color: `${colors}`,
     };
     let view = <h6 style={style}>{item.label}</h6>
     return {value:item.value, view:view, label:view}
   });
-  let startOption  = {value:'title',label:'Title'}
+  let startOption:{value:string,label:string}  = {value:'title',label:'Title'}
   options = [startOption,...options];
   }
   let dp = <Dropdown placeholder="Title" className="searchDropdown" options={options} onChange={(value) => {setFilter(value.value); setSearch("")}}/>
