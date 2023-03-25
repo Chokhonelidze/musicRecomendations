@@ -5,7 +5,7 @@ import { query } from "./functions/queries";
 import { Card } from "./components/cards";
 import { CreateSong } from "./createSong";
 import "./App.css";
-import YTSearch from "youtube-api-search";
+import YTSearch from "youtube-api-search-typed/dist";
 import ReactPlayer from "react-player";
 const YOUTUBE_KEY  = process.env.REACT_APP_API_KEY_YT;
 
@@ -24,8 +24,8 @@ function App() {
   const [predictions, setPredictions] = React.useState([]);
   const [excludememo,setExcludememo] = React.useState([]);
 
-  const [video,setVideo] = React.useState(null);
-  const videoSearch = (term,id,link=null) => {
+  const [video,setVideo] = React.useState<string>("");
+  const videoSearch = (term:string,id:number,link:string ="") => {
     console.log("click");
     if(link) {
       setVideo(link);
