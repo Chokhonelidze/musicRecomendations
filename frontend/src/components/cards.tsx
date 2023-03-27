@@ -1,17 +1,32 @@
 import "./cards.css";
 import { query } from "../functions/queries";
-import ReactStars from "react-rating-stars-component";
+import ReactStars from "react-star-rating-component";
 import { UserContext } from "../App";
 import React from "react";
-export function Card(props) {
-  const [user, setUser] = React.useContext(UserContext);
-  const download = async (link) => {
+interface StarRatingProps {
+  rating?: number;
+  numberOfStars?: number;
+  changeRating?: (rating: number) => void;
+  starRatedColor?: string;
+  starEmptyColor?: string;
+  starHoverColor?: string;
+  starDimension?: string;
+  starSpacing?: string;
+  gradientPathName?: string;
+  ignoreInlineStyles?: boolean;
+  svgIconPath?: string;
+  svgIconViewBox?: string;
+  name?: string;
+}
+export function Card(props:any) {
+  const [user, setUser] = React.useContext<any>(UserContext);
+  const download = async (link:string) => {
     const q = `
         query downloadSong($link:String!){
           downloadSong(link:$link)
         }
        `;
-    query(q, { link: link }, user, (data) => {
+    query(q, { link: link }, user, (data:any) => {
       const run = async () => {
         let headers = {
           "Content-Type": "application/json",
@@ -27,13 +42,13 @@ export function Card(props) {
         })
           .then((res) => res.blob())
           .then((blob) => {
-            let a = document.createElement("a");
-            a.style = "display: none";
+            let a:HTMLElement = document.createElement("a");
+            a.setAttribute('style',"display: none");
             document.body.appendChild(a);
             let file = window.URL.createObjectURL(blob);
-            a.href = file;
+            a.setAttribute("href",file);
             let name = String(link).split('/');
-            a.download = props.title??"music";
+            a.setAttribute("download",props.title??"music")
             a.click();
             window.URL.revokeObjectURL(file);
           });
@@ -42,10 +57,10 @@ export function Card(props) {
     });
   };
   let style = `card border-primary mb-3 cards ${props?.style}`;
-  function searchVideo(term, id, link = null) {
+  function searchVideo(term:string, id:number, link:string = "") {
     props.videoSearch(term, id, link);
   }
-  function changeStar(newRating) {
+  function changeStar(newRating:number) {
     console.log(props.song);
     if (props.song.play_count) {
       const q = `
@@ -65,7 +80,7 @@ export function Card(props) {
         q,
         { song: { id: props.song.id, play_count: newRating } },
         user,
-        (data) => {
+        (data:string) => {
           console.log(data);
         }
       );
@@ -103,7 +118,7 @@ export function Card(props) {
           },
         },
         user,
-        (data) => {
+        (data:string) => {
           console.log(data);
         }
       ).then(() => {
@@ -137,11 +152,11 @@ export function Card(props) {
       </div>
       <div className="card-footer">
         <ReactStars
-          count={5}
-          size={24}
+          name="star count"
+          starCount={5}
           value={props?.song?.play_count}
-          activeColor="#ffd700"
-          onChange={changeStar}
+          starColor="#ffd700"
+          onStarClick={changeStar}
         />
         {props?.song?.link ? (
           <button

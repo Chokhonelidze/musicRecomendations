@@ -7,9 +7,10 @@ import { CreateSong } from "./createSong";
 import "./App.css";
 import YTSearch from "youtube-api-search-typed/dist";
 import ReactPlayer from "react-player";
+import { user_type,pureSong_type,pureSongsResult_type, song_type, predictOutput_type, songsResult_type, getSong_type, prediction_type } from "./functions/types";
 const YOUTUBE_KEY  = process.env.REACT_APP_API_KEY_YT;
 
-const UserContext = React.createContext(null);
+const UserContext = React.createContext({});
 
 
 
@@ -18,11 +19,11 @@ function App() {
   const [filter, setFilter] = React.useState("title");
   const [offset, setOffset] = React.useState(0);
   const limit = 10;
-  const [user, setUser] = React.useState();
-  const [data, setData] = React.useState([]);
-  const [userData, setUserData] = React.useState([]);
-  const [predictions, setPredictions] = React.useState([]);
-  const [excludememo,setExcludememo] = React.useState([]);
+  const [user, setUser] = React.useState<user_type|{}>({});
+  const [data, setData] = React.useState<pureSong_type[]>([]);
+  const [userData, setUserData] = React.useState<song_type[]>([]);
+  const [predictions, setPredictions] = React.useState<pureSong_type[]>([]);
+  const [excludememo,setExcludememo] = React.useState<number[]>([]);
 
   const [video,setVideo] = React.useState<string>("");
   const videoSearch = (term:string,id:number,link:string ="") => {
@@ -31,7 +32,7 @@ function App() {
       setVideo(link);
     }
     else{
-      YTSearch({key:YOUTUBE_KEY, term:term},(videos) =>{
+      YTSearch({key:YOUTUBE_KEY as string, term:term},(videos) =>{
         
       const q = `
       mutation UpdateAllSongs($song:updateAllSongLinksInput){
@@ -42,16 +43,23 @@ function App() {
         }
       }
       `;
-        let newlink = `//www.youtube.com/embed/${videos[0].id.videoId}?autoplay=1&mute=0`;
-        query(q,{"song":{id:parseInt(id),link:newlink}},user,(d)=>{ 
-          console.log(videos[0]);
+      type response = {
+        sucess:boolean,
+        errors:[string];
+        ids:[number] 
+      }
+      if(videos && videos[0]) {
+        let newlink = `//www.youtube.com/embed/${videos[0].id.videoId as string}?autoplay=1&mute=0`;
+        query(q,{"song":{id:parseInt(String(id) as string),link:newlink}},user as user_type,(d:response)=>{ 
+          console.log(videos[0] as Object);
           console.log(d);
         })
         setVideo(newlink);
-      })
+      }})
+      
     }
   }
- const getAllData = async (user,excludes=[])=>{
+ const getAllData = async (user:user_type,excludes:number[]=[])=>{
   console.log("all data is running")
     const q = `
     query pureSongs($filters:pureSongFilters!){
@@ -69,22 +77,24 @@ function App() {
       }
     }
     `; 
-     query(q, { filters: { search: search, filter: filter, offset:offset,limit:limit } }, user, (d) => {
+     query(q, { filters: { search: search, filter: filter, offset:offset,limit:limit } }, user, (d:pureSongsResult_type) => {
       if (d.listPureSongs.success) {
-        let data = d.listPureSongs.songs;
+        let data_temp:pureSong_type[]  = d.listPureSongs.songs;
         console.log(excludes);
-        console.log(data);
+        console.log(data_temp);
+        let result:pureSong_type[] | [] = []
         if(excludes){
-          data = data.filter((v)=>{
-            return  !excludes.includes(parseInt(v.song_id));
+            result = data_temp.filter((v:pureSong_type):pureSong_type | any =>{
+            return  !excludes.includes(v.song_id as number);
+            
           });
         }
-        setData(data);
+        setData(result);
       }
     });
   }
 
-  const getRatedData = async (user,excludes=[])=>{
+  const getRatedData = async (user:user_type,excludes:number[]=[])=>{
     console.log("rated data is runing")
     const q = `
     query Songs($filters:songFilters!) {
@@ -104,18 +114,18 @@ function App() {
       }
     }
     `;
-    let ids = [];
+    let ids: any[] = [];
    await query(q,{ filters: 
       { search: search, 
         filter: filter, 
         user: user.id } },
       user,
-      (d) => {
+      (d:songsResult_type) => {
         if (d.listSongs.success && d.listSongs.songs.length > 0) {
-          let data = [];
-          d.listSongs.songs.forEach((v,i)=>{
+          let data:song_type[] = [];
+          d.listSongs.songs.forEach((v,i:number)=>{
             if(excludes) {
-              if(!excludes.includes(v.id)) {
+              if(!excludes.includes(v.id as number)) {
                 data.push(v);
                 ids.push(v.song_id);
               }
@@ -131,7 +141,7 @@ function App() {
       return ids;
   }
 
-  const getPredictedData = async (user,excludes=[])=>{
+  const getPredictedData = async (user:user_type,excludes:number[]=[])=>{
     const q = `
     query predictSong($songInput:songInput!){
       predictSong(query:$songInput){
@@ -145,13 +155,13 @@ function App() {
       }
     }
     `;
-    const ids = [];
-    await query(q,{songInput: {user_id: parseInt(user.id)}},user,
-              (d) => {
-                const allData = [];
+    const ids:number[] = [];
+    await query(q,{songInput: {user_id: user.id}},user,
+              (d:predictOutput_type) => {
+                const allData:pureSong_type[] = [];
                 console.log(d.predictSong);
                 if(d.predictSong.success){
-                d.predictSong.predict.forEach(async (v,i)=>{
+                d.predictSong.predict.forEach(async (v:prediction_type,i:number)=>{
                   const q = `
                   query findSong($id:ID!){
                     getSong(id:$id){
@@ -169,14 +179,14 @@ function App() {
                     }
                   }
                   `;
-                await query(q,{"id":v.id},user,(data)=>{
+                await query(q,{"id":v.id},user,(data:getSong_type)=>{
                   console.log(data);
                     if(data.getSong.success){
                       let song = data.getSong.song
                       song['predict'] = v.score;
                       song['common'] = v.common;
                       allData.push(song);
-                      ids.push(v.song_id);
+                      ids.push(v.id as number);
                     }
                   });
 
@@ -190,28 +200,28 @@ function App() {
   async function load(){
     console.log("load run!")
     if (user) {
-      let allexcludes = [];
-     await getRatedData(user)
+      let allexcludes:number[] = [];
+     await getRatedData(user as user_type)
       .then((excludes)=>{
         if(excludes) {
           console.log(excludes);
           allexcludes = [...excludes,...allexcludes];
           console.log(allexcludes);
-          getPredictedData(user,allexcludes)
+          getPredictedData(user as user_type,allexcludes)
           .then((excludes)=>{
             console.log(excludes);
             if(excludes) {
               allexcludes = [...excludes,...allexcludes];
               console.log(allexcludes)
-              getAllData(user,allexcludes);
+              getAllData(user as user_type,allexcludes);
             }
             else {
-              getAllData(user,allexcludes);
+              getAllData(user as user_type,allexcludes);
             }
           })
         }
         else{
-          getAllData(user);
+          getAllData(user as user_type);
         }
       })
       setExcludememo(allexcludes);
@@ -223,8 +233,8 @@ function App() {
       setOffset(0);
       const timer = setTimeout(() => {
         setUserData([]);
-        getRatedData(user);
-        getAllData(user,excludememo);
+        getRatedData(user as user_type);
+        getAllData(user as user_type,excludememo);
         console.log("refresh started");
       }, 2000)
       return () => clearTimeout(timer)
@@ -235,7 +245,7 @@ function App() {
   }, [user,search]);
 
   
-  function View(props) {
+  function View(props:any) {
     const loadMore = () => {
       /**
        *  this is the callback function used for data load.
@@ -259,6 +269,7 @@ function App() {
       }
       `; 
       if (
+        document.scrollingElement &&
         window.innerHeight + document.documentElement.scrollTop+1 >=
         document.scrollingElement.scrollHeight
       ) {
@@ -266,7 +277,7 @@ function App() {
         let newLimit = limit;
        console.log(newLimit,newOffset);
        
-      function mergeData(newData) {
+      function mergeData(newData:any) {
         setOffset(newOffset);
         
         if(newData.listPureSongs.songs && newData.listPureSongs.songs.length > 0) {
@@ -285,7 +296,7 @@ function App() {
         limit:newLimit
       }
   
-        query(q,{filters:parameters},user,mergeData);
+        query(q,{filters:parameters},user as user_type,mergeData);
       }
      
     }
@@ -307,7 +318,7 @@ function App() {
     });
     let userD = "";
     if (props.userData) {
-      userD = props.userData.map((val, index) => {
+      userD = props.userData.map((val:any, index:number) => {
         return (
           <Card
             key={"user_card_" + index}
@@ -324,7 +335,7 @@ function App() {
     let recommended = "";
     if(props.recommendedData) {
       console.log(props.recommendedData);
-      recommended = props.recommendedData.map((val,index)=>{
+      recommended = props.recommendedData.map((val:any,index:number)=>{
        return (<Card
         key={"recommended_key_" + index}
         title={val.title}

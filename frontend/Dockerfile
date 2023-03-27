@@ -6,6 +6,8 @@ COPY package.json /app/package.json
 
 COPY tsconfig.json /app/tsconfig.json
 
+RUN npm install npm
+
 RUN npm install 
 
 #COPY . .

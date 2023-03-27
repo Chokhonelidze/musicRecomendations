@@ -4,11 +4,12 @@ import { validator } from "./functions/validator";
 import { query } from "./functions/queries";
 
 import "./login.css";
+import { createUserResult_type, loginOutput_type, user_type } from "./functions/types";
 export function Login() {
-  const [user, setUser] = React.useContext(UserContext);
+  const [user, setUser] = React.useContext<any>(UserContext);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState({});
+  const [error, setError] = React.useState<any>({});
   const [hasErrors, setHasErrors] = React.useState(false);
   const [createNew, setCreateNew] = React.useState(false);
   const [createUser, setCreateUser] = React.useState("");
@@ -27,7 +28,7 @@ export function Login() {
         }
       }
     `;
-    query(q,{"user":{email:createUser,password:createPassword,role:0}},user, (obj)=>{
+    query(q,{"user":{email:createUser,password:createPassword,role:0}},user, (obj:createUserResult_type)=>{
         if(obj.createUser.user){
           console.log(obj);
             setUser(obj.createUser.user);
@@ -35,7 +36,7 @@ export function Login() {
             setHasErrors(false);
         }
         else if(obj.createUser.errors) {
-            let errors = error;
+            let errors:{[key:string]:string} = error;
             errors['mainError'] = obj.createUser.errors.join(",");
             setError(errors);
             setHasErrors(true);
@@ -63,13 +64,13 @@ export function Login() {
                 }
             }
             `;
-      query(q, { query: obj }, user, (obj) => {
+      query(q, { query: obj }, user, (obj:loginOutput_type) => {
         if (obj.login?.error) {
-          let errors = error;
+          let errors:{[key:string]:string} = error;
           errors["login"] = obj.login?.error;
           setError(errors);
           setHasErrors(true);
-        } else if (error["login"]) {
+        } else {
           setError({});
           setHasErrors(false);
         }
@@ -83,7 +84,7 @@ export function Login() {
         <div
           onClick={() => {
             setUser(null);
-            window.location.reload(false);
+            window.location.reload();
           }}
         >
           <button className="btn btn-primary" type="button">
@@ -109,13 +110,13 @@ export function Login() {
                     try {
                       setCreateUser(e.target.value);
                       validator(e.target.value, "email");
-                      let errors = error;
+                      let errors:{[key:string]:string} = error;
                       errors["createEmail"] = "";
                       setError(errors);
                       setHasErrors(false);
-                    } catch (err) {
-                      let errors = error;
-                      errors["createEmail"] = err.email;
+                    } catch (err:any) {
+                      let errors:{[key:string]:string} = error;
+                      errors["createEmail"] = err.email as string;
                       setError(errors);
                       setHasErrors(true);
                     }
@@ -141,7 +142,7 @@ export function Login() {
                         setError(errors);
                         setHasErrors(false);
                     }
-                    catch(err) {
+                    catch(err:any) {
                         let errors = error;
                         errors["createPassword"] = err.password;
                         setError(errors);
@@ -171,7 +172,7 @@ export function Login() {
                             setHasErrors(false);
                             createNewUser();
                         }
-                        catch(err) {
+                        catch(err:any) {
                             let errors = error;
                             if(err.email)errors['createEmail'] = err.email;
                             if(err.password)errors['createPassword'] = err.password;

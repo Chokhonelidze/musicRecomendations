@@ -1,10 +1,6 @@
+import {user_type} from "./types";
 const server:string = process.env.REACT_APP_SERVER ? process.env.REACT_APP_SERVER :"http://localhost:3000";
 
-type user_type = {
-  email:string,
-  id:number,
-  role:number
-}
 
 /**
  * @description function is used to get pockemons from database.
