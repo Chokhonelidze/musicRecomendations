@@ -19,7 +19,7 @@ function App() {
   const [filter, setFilter] = React.useState("title");
   const [offset, setOffset] = React.useState(0);
   const limit = 10;
-  const [user, setUser] = React.useState<user_type|{}>({});
+  const [user, setUser] = React.useState<user_type>();
   const [data, setData] = React.useState<pureSong_type[]>([]);
   const [userData, setUserData] = React.useState<song_type[]>([]);
   const [predictions, setPredictions] = React.useState<pureSong_type[]>([]);
@@ -381,7 +381,7 @@ function App() {
         
         <Login />
         <CreateSong />
-        {user && (
+        {user as user_type != null && (
           <NavBar
             filter={[filter, setFilter]}
             search={[search, setSearch]}
@@ -389,7 +389,7 @@ function App() {
           />
         )}
         <div className="center">
-        {video && user?<ReactPlayer
+        {video && user as user_type?<ReactPlayer
         url={video}
         playing={true}
         width={220}

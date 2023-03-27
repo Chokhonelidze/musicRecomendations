@@ -1,6 +1,5 @@
 import "./cards.css";
 import { query } from "../functions/queries";
-import ReactStars from "react-star-rating-component";
 import { UserContext } from "../App";
 import React from "react";
 interface StarRatingProps {
@@ -151,13 +150,7 @@ export function Card(props:any) {
         )}
       </div>
       <div className="card-footer">
-        <ReactStars
-          name="star count"
-          starCount={5}
-          value={props?.song?.play_count}
-          starColor="#ffd700"
-          onStarClick={changeStar}
-        />
+
         {props?.song?.link ? (
           <button
             onClick={() => {
