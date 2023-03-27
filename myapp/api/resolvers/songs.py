@@ -8,7 +8,6 @@ from surprise.prediction_algorithms.knns import KNNBasic
 import pandas as pd
 
 def get_recommendations(data, user_id, top_n, algo):
-    
     # Creating an empty list to store the recommended product ids
     recommendations = []
     
@@ -34,6 +33,7 @@ def get_recommendations(data, user_id, top_n, algo):
 @convert_kwargs_to_snake_case
 def predict_songs_resolver(obj,info,query):
     try:
+        
         gs_optimized = KNNBasic(sim_options={'name':'pearson_baseline','user_based': True}, k=30, min_k=5, verbose=False)
         gs_optimized_item = KNNBasic(sim_options={'name':'pearson_baseline','user_based': False},random_state = 1, k=30, min_k=5, verbose=False)
 
@@ -49,8 +49,8 @@ def predict_songs_resolver(obj,info,query):
         #p_play_count_play = gs_optimized.predict(query['user_id'],query["song_id"],verbose=True)
         #print(p_play_count_play)
         df_rating=df.drop_duplicates()
-        recommendations =get_recommendations(df_rating,query.get("user_id"),3,gs_optimized)
-        recommendations2 =get_recommendations(df_rating,query.get("user_id"),3,gs_optimized_item)
+        recommendations =get_recommendations(df_rating,int(query.get("user_id")),3,gs_optimized)
+        recommendations2 =get_recommendations(df_rating,int(query.get("user_id")),3,gs_optimized_item)
         frecommendations = recommendations + recommendations2
         
         obj = {}
@@ -73,6 +73,7 @@ def predict_songs_resolver(obj,info,query):
             "predict":finalfrecommendations
         }
     except Exception as error:
+        print(error)
         payload = {
             "success":False,
             "errors":[str(error)]

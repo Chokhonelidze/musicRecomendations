@@ -36,7 +36,7 @@ type updateAllSongsType {
     ids:[Int]
 }
 input songInput {
-    user_id:Int!,
+    user_id:ID!,
 }
 input songFilters {
     search:String,
