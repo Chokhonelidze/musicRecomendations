@@ -2,21 +2,9 @@ import "./cards.css";
 import { query } from "../functions/queries";
 import { UserContext } from "../App";
 import React from "react";
-interface StarRatingProps {
-  rating?: number;
-  numberOfStars?: number;
-  changeRating?: (rating: number) => void;
-  starRatedColor?: string;
-  starEmptyColor?: string;
-  starHoverColor?: string;
-  starDimension?: string;
-  starSpacing?: string;
-  gradientPathName?: string;
-  ignoreInlineStyles?: boolean;
-  svgIconPath?: string;
-  svgIconViewBox?: string;
-  name?: string;
-}
+//import ReactStars from "react-rating-stars-component";
+import { Rating } from 'react-simple-star-rating'
+
 export function Card(props:any) {
   const [user, setUser] = React.useContext<any>(UserContext);
   const download = async (link:string) => {
@@ -150,7 +138,13 @@ export function Card(props:any) {
         )}
       </div>
       <div className="card-footer">
-
+      <Rating
+          count={5}
+          size={24}
+          value={props?.song?.play_count}
+          activeColor="#ffd700"
+          onChange={changeStar}
+        />
         {props?.song?.link ? (
           <button
             onClick={() => {
