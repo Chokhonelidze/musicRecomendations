@@ -2,8 +2,10 @@ import "./cards.css";
 import { query } from "../functions/queries";
 import { UserContext } from "../App";
 import React from "react";
-//import ReactStars from "react-rating-stars-component";
 import { Rating } from 'react-simple-star-rating'
+
+
+
 
 export function Card(props:any) {
   const [user, setUser] = React.useContext<any>(UserContext);
@@ -139,11 +141,11 @@ export function Card(props:any) {
       </div>
       <div className="card-footer">
       <Rating
-          count={5}
           size={24}
-          value={props?.song?.play_count}
-          activeColor="#ffd700"
-          onChange={changeStar}
+          //how to change color of stars  
+          fillColor='gold'
+          initialValue={props?.song?.play_count}
+          onClick={changeStar}
         />
         {props?.song?.link ? (
           <button
