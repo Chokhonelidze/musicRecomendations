@@ -98,7 +98,7 @@ export function Card(props:any) {
         q,
         {
           song: {
-            user_id: user.id,
+            user_id: user.id as number,
             song_id: parseInt(props.song.song_id),
             play_count: newRating,
             title: props.song.title,

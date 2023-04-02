@@ -46,8 +46,8 @@ input songFilters {
     offset:Int = 0
 }
 input createSong{
-    user_id:Int!,
-    song_id:Int!,
+    user_id:ID!,
+    song_id:ID!,
     play_count:Int,
     title:String!,
     release:String,
