@@ -142,7 +142,6 @@ export function Card(props:any) {
       <div className="card-footer">
       <Rating
           size={24}
-          //how to change color of stars  
           fillColor='gold'
           initialValue={props?.song?.play_count}
           onClick={changeStar}
