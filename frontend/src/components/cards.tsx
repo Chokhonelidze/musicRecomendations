@@ -3,12 +3,14 @@ import { query } from "../functions/queries";
 import { UserContext } from "../App";
 import React from "react";
 import { Rating } from 'react-simple-star-rating'
-
+import { user_type } from "../functions/types";
 
 
 
 export function Card(props:any) {
-  const [user, setUser] = React.useContext<any>(UserContext);
+
+  const [user] = React.useContext(UserContext) as [user_type];
+
   const download = async (link:string) => {
     const q = `
         query downloadSong($link:String!){
@@ -96,7 +98,7 @@ export function Card(props:any) {
         q,
         {
           song: {
-            user_id: parseInt(user.id),
+            user_id: user.id,
             song_id: parseInt(props.song.song_id),
             play_count: newRating,
             title: props.song.title,

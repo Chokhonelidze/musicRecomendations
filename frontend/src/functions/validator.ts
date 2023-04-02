@@ -1,3 +1,9 @@
+/**
+ * 
+ * @param field string to be validated
+ * @param type type of the string
+ * @returns boolean if the string is valid or throws an error
+ */
 export function validator(field:string, type:string):boolean {
   switch (type) {
     case "name":
