@@ -54,14 +54,17 @@ def create_song_resolver(obj,info,song):
     return payload
 @convert_kwargs_to_snake_case
 def download_song_resolver(obj,info,link):
-    ty = YouTube(str(link))
-    video = ty.streams.filter(only_audio=True).first()
-    destination = "/downloads/"
-    out_file = video.download(output_path=destination)
-    base, ext = os.path.splitext(out_file)
-    new_file = base + '.mp3'
-    os.rename(out_file, new_file)
-    return new_file
+    try:
+        ty = YouTube(str(link))
+        video = ty.streams.filter(only_audio=True).first()
+        destination = "/downloads/"
+        out_file = video.download(output_path=destination)
+        base, ext = os.path.splitext(out_file)
+        new_file = base + '.mp3'
+        os.rename(out_file, new_file)
+        return new_file
+    except Exception as error:
+        print(error,flush=True)
 
 @convert_kwargs_to_snake_case
 def update_song_resolver(obj,info,song):
