@@ -22,13 +22,13 @@ RUN pipenv install --system --dev
 RUN pip install --upgrade pip
 RUN python -m pip install git+https://github.com/pytube/pytube
 
-COPY  ./api ${SRC_DIR}
+
 
 WORKDIR ${PROJECT_DIR}
 
 EXPOSE 5000
 
-CMD ["flask","run","-h", "0.0.0.0"]
+CMD ["flask","--debug","run","-h", "0.0.0.0"]
 
 
 

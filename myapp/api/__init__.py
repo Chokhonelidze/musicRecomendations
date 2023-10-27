@@ -28,6 +28,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
 """
 
 app.config['SQLALCHEMY_DATABASE_URI']=os.environ.get('DB', "sqlite://")
+app.config['FLASK_DEBUG'] = os.environ.get('FLASK_DEBUG');
 print(os.environ.get('DB', "sqlite://"))
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
