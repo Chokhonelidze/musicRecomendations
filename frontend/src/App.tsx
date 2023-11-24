@@ -246,7 +246,7 @@ function App() {
 
   
   function View(props:any) {
-    const loadMore = () => {
+    const loadMore =async () => {
       /**
        *  this is the callback function used for data load.
        */
@@ -296,7 +296,7 @@ function App() {
         limit:newLimit
       }
   
-        query(q,{filters:parameters},user as user_type,mergeData);
+        await query(q,{filters:parameters},user as user_type,mergeData);
       }
      
     }
@@ -371,7 +371,7 @@ function App() {
     );
   }
   const ViewMemo = React.useMemo(()=>{
-  return <View dataSet={[data,setData]} 
+  return<View dataSet={[data,setData]} 
                 userData={userData} 
                 recommendedData={predictions} />}
                 ,[data,userData,predictions]);
