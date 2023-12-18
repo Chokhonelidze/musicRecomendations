@@ -11,7 +11,7 @@ COPY requirements.txt ${PROJECT_DIR}/
 
 COPY app.py ${PROJECT_DIR}/
 
-COPY  ./api ${SRC_DIR}
+ADD ./api ${SRC_DIR}
 
 WORKDIR ${PROJECT_DIR}
 

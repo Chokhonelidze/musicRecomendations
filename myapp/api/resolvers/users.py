@@ -5,7 +5,7 @@ from passlib.hash import sha256_crypt
 from api import db
 @convert_kwargs_to_snake_case
 def test(obj,info)->str:
-    return "test2"
+    return "test3"
 @convert_kwargs_to_snake_case
 def login(obj,info,query):
     email = query['email']

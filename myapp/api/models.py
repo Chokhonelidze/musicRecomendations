@@ -19,6 +19,7 @@ class Post(db.Model):
 with app.app_context():
     db.create_all()
 
+
 class User(db.Model): 
     id = db.Column(db.Integer,primary_key=True)
     email = db.Column(db.String(200))
@@ -42,7 +43,7 @@ class Song(db.Model):
     release = db.Column(db.String(300))
     artist_name = db.Column(db.String(300))
     year = db.Column(db.Integer)
-    link = db.Column(db.String(300))
+    link = db.Column(db.String(1000))
     def to_dict(self):
         return {
             "song_id":self.song_id,
@@ -60,11 +61,11 @@ class Songs(db.Model):
     user_id = db.Column(db.Integer)
     song_id = db.Column(db.Integer)
     play_count = db.Column(db.Integer)
-    title = db.Column(db.String)
-    release = db.Column(db.String)
-    artist_name = db.Column(db.String)
+    title = db.Column(db.String(1000))
+    release = db.Column(db.String(300))
+    artist_name = db.Column(db.String(300))
     year = db.Column(db.Integer)
-    link = db.Column(db.String)
+    link = db.Column(db.String(1000))
     def to_dict(self):
         return {
             "id":self.id,
