@@ -32,7 +32,7 @@ app.config['FLASK_DEBUG'] = os.environ.get('FLASK_DEBUG');
 print(os.environ.get('DB', "sqlite://"))
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
-#migrate = Migrate(app,db,compare_type=True,include_schemas=True)
+migrate = Migrate(app,db,compare_type=True,include_schemas=True)
 
 
 @app.route('/downloads/<path:filename>',methods=['GET'])
