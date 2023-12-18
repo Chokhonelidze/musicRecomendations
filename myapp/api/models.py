@@ -83,7 +83,7 @@ with app.app_context():
     print(Songs.query.first())
     if not Songs.query.first():
         filename="final_data.csv"
-        data =pd.read_csv("/usr/local/src/webapp/src/api/"+filename)
+        data =pd.read_csv("/usr/local/src/webapp/api/"+filename)
         
         for index,row in data.iterrows():
             songs = Songs(
