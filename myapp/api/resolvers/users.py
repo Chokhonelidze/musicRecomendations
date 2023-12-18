@@ -4,6 +4,9 @@ from datetime import date
 from passlib.hash import sha256_crypt
 from api import db
 @convert_kwargs_to_snake_case
+def test(obj,info)->str:
+    return "test2"
+@convert_kwargs_to_snake_case
 def login(obj,info,query):
     email = query['email']
     password = query['password']
@@ -52,7 +55,7 @@ def users_resolver(obj,info,query):
         }
     return payload
 
-queries = {"User":users_resolver,"login":login}
+queries = {"User":users_resolver,"login":login,"test":test}
 
 @convert_kwargs_to_snake_case
 def create_user_resolver(obj,info,user):
@@ -143,6 +146,7 @@ def encrypt_all_users(obj,info):
         }
     return payload
 """
+
 mutations = {
     "createUser":create_user_resolver,
     "updateUser":update_user_resolver,

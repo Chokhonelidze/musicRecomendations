@@ -6,9 +6,9 @@ from passlib.hash import sha256_crypt
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String)
-    description = db.Column(db.String)
-    created_at = db.Column(db.String)
+    title = db.Column(db.String(1000))
+    description = db.Column(db.String(2000))
+    created_at = db.Column(db.String(200))
     def to_dict(self):
         return {
             "id": self.id,
@@ -21,10 +21,10 @@ with app.app_context():
 
 class User(db.Model): 
     id = db.Column(db.Integer,primary_key=True)
-    email = db.Column(db.String)
-    password = db.Column(db.String)
-    role = db.Column(db.String)
-    created_at = db.Column(db.String)
+    email = db.Column(db.String(200))
+    password = db.Column(db.String(300))
+    role = db.Column(db.String(200))
+    created_at = db.Column(db.String(200))
     def to_dict(self):
         return {
             "id":self.id,
@@ -38,11 +38,11 @@ with app.app_context():
 
 class Song(db.Model):
     song_id = db.Column(db.Integer,primary_key=True)
-    title = db.Column(db.String)
-    release = db.Column(db.String)
-    artist_name = db.Column(db.String)
+    title = db.Column(db.String(1000))
+    release = db.Column(db.String(300))
+    artist_name = db.Column(db.String(300))
     year = db.Column(db.Integer)
-    link = db.Column(db.String)
+    link = db.Column(db.String(300))
     def to_dict(self):
         return {
             "song_id":self.song_id,

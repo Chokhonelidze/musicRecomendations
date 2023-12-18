@@ -45,7 +45,8 @@ input loginInput {
 """
 query = """
 User(query:UsersQuery):UsersResult,
-login(query:loginInput):loginOutput
+login(query:loginInput):loginOutput,
+test:String
 """
 mutation = """
 createUser(user:createUser!):UserResult,
