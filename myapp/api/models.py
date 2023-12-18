@@ -84,8 +84,10 @@ with app.app_context():
     if not Songs.query.first():
         filename="final_data.csv"
         data =pd.read_csv("/usr/local/src/webapp/api/"+filename)
-        
+        count = 0
         for index,row in data.iterrows():
+            count+=1
+            print(str(count))
             songs = Songs(
                 id=row[0],
                 user_id = row[1],
