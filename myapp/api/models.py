@@ -39,9 +39,9 @@ with app.app_context():
 
 class Song(db.Model):
     song_id = db.Column(db.Integer,primary_key=True)
-    title = db.Column(db.String(1000))
+    title = db.Column(db.String(500),index=True)
     release = db.Column(db.String(300))
-    artist_name = db.Column(db.String(300))
+    artist_name = db.Column(db.String(300),index=True)
     year = db.Column(db.Integer)
     link = db.Column(db.String(1000))
     def to_dict(self):
@@ -58,12 +58,12 @@ with app.app_context():
 
 class Songs(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    user_id = db.Column(db.Integer)
-    song_id = db.Column(db.Integer)
+    user_id = db.Column(db.Integer,index=True)
+    song_id = db.Column(db.Integer,index=True)
     play_count = db.Column(db.Integer)
-    title = db.Column(db.String(1000))
+    title = db.Column(db.String(500),index=True)
     release = db.Column(db.String(300))
-    artist_name = db.Column(db.String(300))
+    artist_name = db.Column(db.String(300),index=True)
     year = db.Column(db.Integer)
     link = db.Column(db.String(1000))
     def to_dict(self):
