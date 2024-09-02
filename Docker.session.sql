@@ -3,17 +3,24 @@ select * from information_schema.tables
 
 select * from public.user
 
-UPDATE  public.user SET role = 1 WHERE id = 1
+DELETE FROM public.user WHERE id = 2
+
+git
 
 
 SELECT * FROM public.song
 
 
-UPDATE public.song set artist_name='MAGIC!',title='Rude' where song_id = 1
+UPDATE public.song set link='//www.youtube.com/embed/9bZkp7q19f0?autoplay=1&mute=0' where song_id = 9
 
 
+SELECT * FROM public.songs where user_id in ( 1,2,3)
 
-SELECT * FROM public.songs where artist_name = 'Soltero'
+
+UPDATE public.songs set link = '//www.youtube.com/embed/9bZkp7q19f0?autoplay=1&mute=0' where id=40
 
 
-UPDATE public.songs set link = '//www.youtube.com/embed/gVbyfR0UaCc?autoplay=1&mute=0' where title='Step Through The Door'
+DELETE  FROM public.songs where user_id =2
+
+
+SELECT * FROM public.songs WHERE user_id not in (SELECT id FROM public.user)
