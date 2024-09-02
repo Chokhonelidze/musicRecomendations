@@ -2,3 +2,5 @@ docker-compose.yml
 .vscode
 /downloads
 myapp/downloads
+myapp/downloads/*
+
