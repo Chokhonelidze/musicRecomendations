@@ -3,4 +3,5 @@ docker-compose.yml
 /downloads
 myapp/downloads
 myapp/downloads/*
-
+!myapp/downloads/*
+downloads
