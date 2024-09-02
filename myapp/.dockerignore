@@ -6,7 +6,7 @@ __pycache__/
 .gitignore
 Dockerfile
 vim .dockerignore
-
+downloads
 .dockerignore
 
 Dockerfile
