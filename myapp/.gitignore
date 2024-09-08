@@ -5,3 +5,6 @@ lib64
 __pycache__
 downloads
 downloads/*
+myapp/downloads/
+myapp/downloads/*
+myapp/downloads
