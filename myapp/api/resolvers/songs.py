@@ -1,11 +1,13 @@
 from ariadne import convert_kwargs_to_snake_case
-from api import db
+from api import db,executor
 from ..models import Songs,Song
 from surprise.reader import Reader
 from sqlalchemy import text,desc
 from surprise.dataset import Dataset
 from surprise.prediction_algorithms.knns import KNNBasic
 import pandas as pd
+from api.core.functions.saveText import get_throttling_function_name,saveText
+
 
 def get_recommendations(data, user_id, top_n, algo):
     # Creating an empty list to store the recommended product ids
@@ -145,7 +147,7 @@ queries = {"listSongs":list_songs_resolver,
 @convert_kwargs_to_snake_case
 def create_song_resolver(obj,info,song):
     try:
-        songf = Songs.query.filter((Songs.user_id  == song['user_id']) & (Songs.song_id == song['song_id'])).first();
+        songf = Songs.query.filter((Songs.user_id  == song['user_id']) & (Songs.song_id == song['song_id'])).first()
         if not songf:
             songI = Songs(
                 user_id = song['user_id'],
@@ -180,19 +182,17 @@ def update_song_links(obj,info,song):
     try:
         assert(song.get('id'))
         assert(song.get('link'))
-        songs = Songs.query.filter_by(song_id=song.get('id')).all()
-        ids = []
-        for s in songs:
-            setattr(s,"link",song.get('link'))
-            ids.append(s.id)
-        db.session.commit()
+       
         payload = {
             "success":True,
-            "ids":ids
+            "ids":[song.get(id)]
         }
         songl = Song.query.get(song.get("id"))
         setattr(songl,"link",song.get("link"))
         db.session.commit()
+        executor.submit(saveText,song.get('link'),song.get('id'))
+        
+        
     except Exception as error:
         payload = {
             "success":False,

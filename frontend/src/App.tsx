@@ -26,10 +26,11 @@ function App() {
   const [excludememo,setExcludememo] = React.useState<number[]>([]);
 
   const [video,setVideo] = React.useState<string>("");
-  const videoSearch = (term:string,id:number,link:string ="") => {
+  const videoSearch = (term:string,id:number,link:string ="",localLink:string="") => {
     console.log("click");
-    if(link) {
-      setVideo(link);
+    if(localLink) {
+      let newLocalLink =process.env.REACT_APP_DOWNLOADSERVER + localLink
+      setVideo(newLocalLink);
     }
     else{
       YTSearch({key:YOUTUBE_KEY as string, term:term},(videos) =>{
@@ -72,6 +73,7 @@ function App() {
           artist_name,
           release,
           year,
+          local_link,
           link,
         }
       }
@@ -108,7 +110,7 @@ function App() {
           release,
           artist_name,
           year,
-          link,
+          local_link,
           play_count
         }
       }
@@ -173,7 +175,7 @@ function App() {
                         title,
                         release,
                         artist_name,
-                        link,
+                        local_link,
                         year
                       }
                     }
@@ -264,6 +266,7 @@ function App() {
             release,
             year,
             link,
+            local_link
           }
         }
       }

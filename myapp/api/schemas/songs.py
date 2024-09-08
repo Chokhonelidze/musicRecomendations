@@ -1,13 +1,13 @@
 type="""
 type song {
-    id:ID!,
-    user_id:Int!,
-    song_id:Int!,
-    play_count:Int,
-    title:String!,
-    release:String,
-    artist_name:String!,
-    link:String,
+    id:ID!
+    user_id:Int!
+    song_id:Int!
+    play_count:Int
+    title:String!
+    release:String
+    artist_name:String!
+    local_link:String
     year:Int!
 }
 type songsResult {

@@ -12,13 +12,7 @@ export function Card(props:any) {
   const [user] = React.useContext(UserContext) as [user_type];
 
   const download = async (link:string) => {
-    const q = `
-        query downloadSong($link:String!){
-          downloadSong(link:$link)
-        }
-       `;
-    query(q, { link: link }, user, (data:any) => {
-      const run = async () => {
+
         let headers = {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -27,7 +21,7 @@ export function Card(props:any) {
             "Origin, X-Requested-With, Content-Type, Accept",
         };
         const server = process.env.REACT_APP_DOWNLOADSERVER;
-        await fetch(server + "/" + data.downloadSong, {
+        await fetch(server +link, {
           method: "GET",
           headers: headers,
         })
@@ -43,13 +37,12 @@ export function Card(props:any) {
             a.click();
             window.URL.revokeObjectURL(file);
           });
-      };
-      run();
-    });
+  
+
   };
   let style = `card border-primary mb-3 cards ${props?.style}`;
-  function searchVideo(term:string, id:number, link:string = "") {
-    props.videoSearch(term, id, link);
+  function searchVideo(term:string, id:number, link:string = "",localLink:string="") {
+    props.videoSearch(term, id, link,localLink);
   }
   function changeStar(newRating:number) {
     console.log(props.song);
@@ -129,7 +122,8 @@ export function Card(props:any) {
           searchVideo(
             `${props.title} ${props.header}`,
             props.song.song_id,
-            props?.song?.link
+            props?.song?.link,
+            props?.song?.local_link
           );
         }}
       >
@@ -148,10 +142,10 @@ export function Card(props:any) {
           initialValue={props?.song?.play_count}
           onClick={changeStar}
         />
-        {props?.song?.link ? (
+        {props?.song?.local_link ? (
           <button
             onClick={() => {
-              download(props?.song?.link);
+              download(props?.song?.local_link);
             }}
             style={{
               position:"relative",

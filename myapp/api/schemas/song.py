@@ -1,10 +1,11 @@
 type="""
 type pureSong {
-    song_id:ID!,
-    title:String!,
-    release:String,
-    artist_name:String!,
-    link:String,
+    song_id:ID!
+    title:String!
+    release:String
+    artist_name:String!
+    link:String
+    local_link:String
     year:Int!
 }
 
@@ -44,6 +45,7 @@ input updatePureSong{
 query="""
 listPureSongs(filters:pureSongFilters!): pureSongsResult,
 downloadSong(link:String!): String,
+searchSong(songText:String!):[Int]
 """
 
 mutation="""

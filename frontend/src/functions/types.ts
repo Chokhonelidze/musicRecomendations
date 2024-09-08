@@ -54,7 +54,7 @@ export type song_type = {
   title:number,
   release:string,
   artist_name:number,
-  link:string,
+  local_link:string,
   year:number,
 }
 export type songsResult_type = {

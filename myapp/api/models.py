@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 from datetime import date
 from passlib.hash import sha256_crypt
+from flask_alembic import Alembic
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,6 +20,19 @@ class Post(db.Model):
 with app.app_context():
     db.create_all()
 
+
+class Downlods(db.Model):
+    id=db.Column(db.Integer,primary_key=True)
+    file=db.Column(db.String(100))
+    text=db.Column(db.Text)
+    def to_dict(self):
+        return {
+            "id":self.id,
+            "file":self.file,
+            "text":self.text
+        }
+with app.app_context():
+    db.create_all()
 
 class User(db.Model): 
     id = db.Column(db.Integer,primary_key=True)
@@ -44,6 +58,7 @@ class Song(db.Model):
     artist_name = db.Column(db.String(300),index=True)
     year = db.Column(db.Integer)
     link = db.Column(db.String(1000))
+    localLink = db.Column(db.String(1000))
     def to_dict(self):
         return {
             "song_id":self.song_id,
@@ -51,6 +66,7 @@ class Song(db.Model):
             "release":self.release,
             "artist_name":self.artist_name,
             "year":self.year,
+            "local_link":self.localLink,
             "link":self.link
         }
 with app.app_context():
@@ -75,7 +91,7 @@ class Songs(db.Model):
             "title":self.title,
             "release":self.release,
             "artist_name":self.artist_name,
-            "link":self.link,
+            "local_link":self.link,
             "year":self.year
         }
 with app.app_context():
@@ -123,3 +139,5 @@ with app.app_context():
             db.session.add(songs)
         db.session.commit()
     
+
+# alembic = Alembic(metadatas=db.Model.metadata) 

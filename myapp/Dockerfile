@@ -18,7 +18,8 @@ ENV PYTHONUNBUFFERED=1
 FROM base as dev
 
 #RUN pipenv install --system --dev
-
+# RUN apt-get upgrade apt
+# RUN apt install ffmpeg
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 #RUN python -m pip install git+https://github.com/pytube/pytube
