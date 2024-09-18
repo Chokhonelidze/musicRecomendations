@@ -5,12 +5,12 @@ import os
 from api import db,executor
 import re
 from api.core.functions.saveText import get_throttling_function_name,saveText
-from api.core.functions.searchText import getSongs,deleteSongs
+from api.core.functions.searchText import getSongs,deleteSongs,restChroma,loadDataToChroma
 @convert_kwargs_to_snake_case
-def searchSong(obj,info,song_text):
+def searchSong(obj,info,song_text,model):
     try:
         #deleteSongs(["202","605","703","4"])
-        data = getSongs(songText=song_text)
+        data = getSongs(songText=song_text,model=model)
      
 
         # song = Song.query.filter(Song.song_id == '6222').first()
@@ -20,12 +20,30 @@ def searchSong(obj,info,song_text):
         print(error)
     return []
 
+def resetChroma(obj,info,name):
+    try:
+        restChroma(name)
+        return "ok"
+    except Exception as error:
+        return (error)
+    
+
+def retrainChroma(obj,info,name,chank,overlap):
+    try:
+        loadDataToChroma(name,chank,overlap)
+        return "ok"
+    except Exception as e:
+        return e
+        
 
 @convert_kwargs_to_snake_case
 def list_songs_resolver(obj,info,filters=None):
     try:
         if filters.get("search"):
-            if filters['filter'] == 'title':
+            if filters.get("filter") == 'AI':
+                ai_search = getSongs(songText=filters.get("search"),model="nomic-ai/nomic-embed-text-v1")
+                songs = [song.to_dict() for song in Song.query.filter(Song.song_id.in_(ai_search)).all()]
+            elif filters['filter'] == 'title':
                 songs =  [song.to_dict() for song in Song.query.filter((Song.title.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'release':
                 songs =  [song.to_dict() for song in Song.query.filter((Song.release.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
@@ -129,7 +147,9 @@ mutations = {
 queries = {
     "listPureSongs":list_songs_resolver,
     "downloadSong":download_song_resolver,
-    "searchSong":searchSong
+    "searchSong":searchSong,
+    "retrainChroma":retrainChroma,
+    "resetChroma":resetChroma
 }
 pure_songs_resolver = {
     "queries":queries,

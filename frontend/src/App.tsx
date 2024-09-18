@@ -252,7 +252,9 @@ function App() {
       /**
        *  this is the callback function used for data load.
        */
-
+      if(filter === "AI"){
+        return false;
+      }
       const [data,setData] = props.dataSet;
       const q = `
       query pureSongs($filters:pureSongFilters!){

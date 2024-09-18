@@ -45,7 +45,9 @@ input updatePureSong{
 query="""
 listPureSongs(filters:pureSongFilters!): pureSongsResult,
 downloadSong(link:String!): String,
-searchSong(songText:String!):[Int]
+searchSong(songText:String!,model:String):[Int]
+retrainChroma(name:String,chank:Int,overlap:Int): String!
+resetChroma(name:String!):String!
 """
 
 mutation="""

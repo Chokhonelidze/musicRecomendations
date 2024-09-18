@@ -7,6 +7,7 @@ from surprise.dataset import Dataset
 from surprise.prediction_algorithms.knns import KNNBasic
 import pandas as pd
 from api.core.functions.saveText import get_throttling_function_name,saveText
+from api.core.functions.searchText import getSongs
 
 
 def get_recommendations(data, user_id, top_n, algo):
@@ -88,6 +89,9 @@ def list_songs_resolver(obj,info,filters=None):
     try:
         if filters.get('user'):
             if(filters.get("search")):
+                if filters['filter'] == 'AI':
+                    ai_search = getSongs(songText=filters.get("search"))
+                    songs = [song.to_dict() for song in Songs.query.filter(Songs.song_id.in_(ai_search),Songs.user_id == filters['user']).all()]
                 if filters['filter'] == 'title':
                     songs =  [song.to_dict() for song in Songs.query.filter((Songs.user_id == filters['user']) & (Songs.title.ilike("%"+filters['search']+"%"))).group_by(Songs.song_id,Songs.id).limit(filters['limit']).offset(filters['offset']).all()]
                 elif filters['filter'] == 'release':
@@ -99,6 +103,9 @@ def list_songs_resolver(obj,info,filters=None):
             else:
                 songs = [song.to_dict() for song in Songs.query.filter_by(user_id =filters['user']).order_by(desc(Songs.play_count)).limit(filters['limit']).offset(filters['offset']).all()];
         elif filters.get("search"):
+            if filters['filter'] == 'AI':
+                ai_search = getSongs(songText=filters.get("search"))
+                songs = [song.to_dict() for song in Songs.query.filter(Songs.song_id.in_(ai_search),Songs.user_id == filters['user']).all()]
             if filters['filter'] == 'title':
                 songs =  [song.to_dict() for song in Songs.query.filter((Songs.title.ilike("%"+filters['search']+"%")) & (Songs.user_id != filters['user'])).group_by('song_id').limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'release':

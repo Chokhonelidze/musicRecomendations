@@ -97,7 +97,7 @@ export function Card(props:any) {
             title: props.song.title,
             release: props.song.release,
             artist_name: props.song.artist_name,
-            link: props.song.link,
+            link: props.song.local_link,
             year: props.song.year,
           },
         },

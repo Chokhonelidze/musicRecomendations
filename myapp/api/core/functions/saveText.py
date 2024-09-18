@@ -10,6 +10,7 @@ import re
 import chromadb
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 _default_clients["ANDROID"]["context"]["client"]["clientVersion"] = "19.08.35"
 _default_clients["IOS"]["context"]["client"]["clientVersion"] = "19.08.35"
@@ -60,7 +61,7 @@ def get_throttling_function_name(js: str) -> str:
 def saveText(link,id):
     try:
         chroma_client = chromadb.HttpClient(host="chroma", port = 8000, settings=Settings(allow_reset=True, anonymized_telemetry=False))
-        sample_collection = chroma_client.get_or_create_collection(name="music")
+        sample_collection = chroma_client.get_or_create_collection(name="music",metadata={"hnsw:space": "cosine"})
         cipher.get_throttling_function_name = get_throttling_function_name
         ty = YouTube(str(link))
         video = ty.streams.filter(only_audio=True).first()
@@ -86,13 +87,22 @@ def saveText(link,id):
         db.session.add(song)
         db.session.add(ob)
         db.session.commit()
-        sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
-        embeddings = sentence_transformer_ef(transcript['text'])
+        sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="nomic-ai/nomic-embed-text-v1")
+        text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+                encoding_name='cl100k_base',
+                chunk_size=1024,
+                chunk_overlap=32
+            )
+        text=text_splitter.split_text(transcript['text'])
+        embeddings = sentence_transformer_ef(text)
         # embeddings = encoding.encode(transcript['text'])
-        metadatas = [{"test":"test"}]
-        ids = [id]
-        if transcript['text'] is not None and embeddings is not None:
-            sample_collection.add(documents=transcript['text'],embeddings=embeddings[0], metadatas=metadatas, ids=ids)
+        metadatas = []
+        ids = []
+        for x in range(len(text)):
+            metadatas.append({"file":new_file,"id":str(id)})
+            ids.append(str(id)+"_"+str(x))
+        if  embeddings is not None:
+            sample_collection.add(embeddings=embeddings, metadatas=metadatas, ids=ids)
             print(sample_collection.get(),flush=True)
 
 

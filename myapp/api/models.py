@@ -126,6 +126,7 @@ with app.app_context():
                     created_at=today.strftime("%Y-%m-%d %H:%M:%S")
                     )
                 db.session.add(userI)
+                db.session.commit()
             fsong = Song.query.get(row[2])
             if not fsong:
                 fsong = Song(
@@ -136,6 +137,7 @@ with app.app_context():
                     year = row[7]
                     )
                 db.session.add(fsong)
+                db.session.commit()
             db.session.add(songs)
         db.session.commit()
     
