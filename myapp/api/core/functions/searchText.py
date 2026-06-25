@@ -2,7 +2,7 @@ import chromadb
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 from api.models import Downlods
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 def restChroma(collection):
