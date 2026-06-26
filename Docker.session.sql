@@ -8,7 +8,7 @@ DELETE FROM public.user WHERE id = 2
 SELECT * FROM public.downlods
 DELETE  FROM downlods
 
-SELECT * FROM public.song WHERE song_id in(7,6)
+SELECT * FROM public.song WHERE link IS NOT NULL
 
 
 
@@ -19,12 +19,14 @@ SELECT * FROM public.song where song_id = 4
 
 SELECT * FROM public.songs where user_id =3
 
+SELECT COUNT(*) FROM public.songs
 
 UPDATE public.songs set link = '//www.youtube.com/embed/9bZkp7q19f0?autoplay=1&mute=0' where id=40
 
 
 DELETE  FROM public.songs where user_id =2
 
+DROP TABLE public.songs
 
 
 

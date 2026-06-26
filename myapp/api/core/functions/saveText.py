@@ -1,9 +1,9 @@
 from api.models import Song, Downlods, Songs, Song
-from pytube import YouTube
+from pytubefix import YouTube  # Changed from pytube to pytubefix
 import os
 from api import db, translate
-from pytube.innertube import _default_clients
-from pytube import cipher
+from pytubefix.innertube import _default_clients  # Changed from pytube to pytubefix
+from pytubefix import cipher  # Changed from pytube to pytubefix
 import re
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from chromadb.utils import embedding_functions
@@ -16,37 +16,12 @@ _default_clients["IOS_EMBED"]["context"]["client"]["clientVersion"] = "19.08.35"
 _default_clients["IOS_MUSIC"]["context"]["client"]["clientVersion"] = "6.41"
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
 
-def get_throttling_function_name(js: str) -> str:
-    """Extract the name of the function that computes the throttling parameter."""
-    function_patterns = [
-        r'a\.[a-zA-Z]\s*&&\s*\([a-z]\s*=\s*a\.get\("n"\)\)\s*&&\s*'
-        r'\([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)',
-        r'\([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)',
-    ]
-    for pattern in function_patterns:
-        regex = re.compile(pattern)
-        function_match = regex.search(js)
-        if function_match:
-            if len(function_match.groups()) == 1:
-                return function_match.group(1)
-            idx = function_match.group(2)
-            if idx:
-                idx = idx.strip("[]")
-                array = re.search(
-                    r'var {nfunc}\s*=\s*(\[.+?\]);'.format(
-                        nfunc=re.escape(function_match.group(1))),
-                    js
-                )
-                if array:
-                    array = array.group(1).strip("[]").split(",")
-                    array = [x.strip() for x in array]
-                    return array[int(idx)]
-    raise Exception("Could not find throttling function name")
 
 def saveText(link, id):
     try:
-        cipher.get_throttling_function_name = get_throttling_function_name
+        
         ty = YouTube(str(link))
+  
         video = ty.streams.filter(only_audio=True).first()
         destination = "/downloads/"
         out_file = video.download(output_path=destination)

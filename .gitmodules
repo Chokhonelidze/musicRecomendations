@@ -1,0 +1,3 @@
+[submodule "go_graphql"]
+	path = go_graphql
+	url = https://github.com/Chokhonelidze/go_graphql.git

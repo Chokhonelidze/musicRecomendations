@@ -1,6 +1,5 @@
 from ..models import Songs,Song,Downlods
 from ariadne import convert_kwargs_to_snake_case
-from pytube import YouTube
 import os
 from api import db,executor
 import re
