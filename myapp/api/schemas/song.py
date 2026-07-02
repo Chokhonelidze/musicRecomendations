@@ -3,7 +3,7 @@ type pureSong {
     song_id:ID!
     title:String!
     release:String
-    artist_name:String!
+    artist:String!
     link:String
     local_link:String
     year:Int!
@@ -22,7 +22,7 @@ type pureSongResult {
 input createPureSong {
     title:String!,
     release:String,
-    artist_name:String!,
+    artist:String!,
     link:String,
     year:Int!
 }
@@ -37,7 +37,7 @@ input updatePureSong{
     id:ID!
     title:String,
     release:String,
-    artist_name:String,
+    artist:String,
     link:String,
     year:Int
 }

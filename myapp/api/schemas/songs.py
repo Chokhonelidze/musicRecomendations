@@ -6,7 +6,7 @@ type song {
     play_count:Int
     title:String!
     release:String
-    artist_name:String!
+    artist:String!
     local_link:String
     year:Int!
 }
@@ -51,7 +51,7 @@ input createSong{
     play_count:Int,
     title:String!,
     release:String,
-    artist_name:String!,
+    artist:String!,
     link:String,
     year:Int!
 }
@@ -60,7 +60,7 @@ input updateSong{
     play_count:Int,
     title:String,
     release:String,
-    artist_name:String,
+    artist:String,
     link:String,
     year:Int
 }

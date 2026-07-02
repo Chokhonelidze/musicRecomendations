@@ -46,8 +46,8 @@ def list_songs_resolver(obj,info,filters=None):
                 songs =  [song.to_dict() for song in Song.query.filter((Song.title.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'release':
                 songs =  [song.to_dict() for song in Song.query.filter((Song.release.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
-            elif filters['filter'] == 'artist_name':
-                songs =  [song.to_dict() for song in Song.query.filter((Song.artist_name.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
+            elif filters['filter'] == 'artist':
+                songs =  [song.to_dict() for song in Song.query.filter((Song.artist.ilike("%"+filters['search']+"%"))).limit(filters['limit']).offset(filters['offset']).all()]
             elif filters['filter'] == 'year':
                 songs =  [song.to_dict() for song in Song.query.filter_by(year=filters['search']).limit(filters['limit']).offset(filters['offset']).all()]
 
@@ -70,7 +70,7 @@ def create_song_resolver(obj,info,song):
         songI = Song(
             title = song['title'],
             release = song['release'],
-            artist_name = song['artist_name'],
+            artist = song['artist'],
             link = song['link'],
             year = song['year'] 
         )
@@ -117,9 +117,9 @@ def update_song_resolver(obj,info,song):
         if(song.get('release')):
             #songI['release'] = song.get('release')
             setattr(songI,"release",song.get('release'));
-        if(song.get('artist_name')):
-            #songI['artist_name'] = song.get('artist_name')
-            setattr(songI,"artist_name",song.get('artist_name'));
+        if(song.get('artist')):
+            #songI['artist'] = song.get('artist')
+            setattr(songI,"artist",song.get('artist'));
         if(song.get('link')):
             #songI['link'] = song.get('link')
             setattr(songI,"link",song.get('link'));

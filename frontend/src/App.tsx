@@ -67,13 +67,12 @@ function App() {
       listPureSongs(filters:$filters){
         success,
         errors,
-        songs{
+        data{
           song_id,
           title,
           artist_name,
           release,
           year,
-          local_link,
           link,
         }
       }
@@ -81,7 +80,7 @@ function App() {
     `; 
      query(q, { filters: { search: search, filter: filter, offset:offset,limit:limit } }, user, (d:pureSongsResult_type) => {
       if (d.listPureSongs.success) {
-        let data_temp:pureSong_type[]  = d.listPureSongs.songs;
+        let data_temp:pureSong_type[]  = d.listPureSongs.data;
         console.log(excludes);
         console.log(data_temp);
         let result:pureSong_type[] | [] = []
@@ -103,14 +102,14 @@ function App() {
       listSongs(filters:$filters){
         errors,
         success,
-        songs{
+        data{
           id,
           song_id,
           title,
           release,
           artist_name,
           year,
-          local_link,
+          link,
           play_count
         }
       }
@@ -123,9 +122,9 @@ function App() {
         user: user.id } },
       user,
       (d:songsResult_type) => {
-        if (d.listSongs.success && d.listSongs.songs.length > 0) {
+        if (d.listSongs.success && d.listSongs.data.length > 0) {
           let data:song_type[] = [];
-          d.listSongs.songs.forEach((v,i:number)=>{
+          d.listSongs.data.forEach((v,i:number)=>{
             if(excludes) {
               if(!excludes.includes(v.id as number)) {
                 data.push(v);
@@ -149,7 +148,7 @@ function App() {
       predictSong(query:$songInput){
         success,
         errors,
-        predict{
+        data{
           id,
           score,
           common
@@ -163,19 +162,19 @@ function App() {
                 const allData:pureSong_type[] = [];
                 console.log(d.predictSong);
                 if(d.predictSong.success){
-                d.predictSong.predict.forEach(async (v:prediction_type,i:number)=>{
+                d.predictSong?.data?.forEach(async (v:prediction_type,i:number)=>{
                   const q = `
                   query findSong($id:ID!){
                     getSong(id:$id){
                       success,
                       errors,
-                      song{
+                      data{
                         id,
                         song_id,
                         title,
                         release,
                         artist_name,
-                        local_link,
+                        link,
                         year
                       }
                     }
@@ -184,7 +183,7 @@ function App() {
                 await query(q,{"id":v.id},user,(data:getSong_type)=>{
                   console.log(data);
                     if(data.getSong.success){
-                      let song = data.getSong.song
+                      let song = data.getSong.data
                       song['predict'] = v.score;
                       song['common'] = v.common;
                       allData.push(song);
@@ -261,14 +260,14 @@ function App() {
         listPureSongs(filters:$filters){
           success,
           errors,
-          songs{
+          data{
             song_id,
             title,
             artist_name,
             release,
             year,
             link,
-            local_link
+            link
           }
         }
       }
@@ -285,8 +284,8 @@ function App() {
       function mergeData(newData:any) {
         setOffset(newOffset);
         
-        if(newData.listPureSongs.songs && newData.listPureSongs.songs.length > 0) {
-          let allData = [...data,...newData.listPureSongs.songs];
+        if(newData.listPureSongs.data && newData.listPureSongs.data.length > 0) {
+          let allData = [...data,...newData.listPureSongs.data];
           console.log(allData);
           allData = allData.filter((val)=>{
             return !excludememo.includes(parseInt(val.song_id));
@@ -344,7 +343,7 @@ function App() {
        return (<Card
         key={"recommended_key_" + index}
         title={val.title}
-        header={val.artist_name}
+        header={val.artist}
         text={val.release + " " + val.year}
         song={val}
         style={val.common?"special":"predicted"}

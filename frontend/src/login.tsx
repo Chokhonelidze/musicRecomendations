@@ -20,7 +20,7 @@ export function Login() {
         createUser(user:$user) {
           success,
           errors,
-          user{
+          data{
             id,
             email,
             role
@@ -28,10 +28,10 @@ export function Login() {
         }
       }
     `;
-    query(q,{"user":{email:createUser,password:createPassword,role:0}},user, (obj:createUserResult_type)=>{
-        if(obj.createUser.user){
+    query(q,{"user":{email:createUser,password:createPassword,role:"USER"}},user, (obj:createUserResult_type)=>{
+        if(obj?.createUser?.data){
           console.log(obj);
-            setUser(obj.createUser.user);
+            setUser(obj.createUser.data);
             setError({});
             setHasErrors(false);
         }
@@ -56,7 +56,7 @@ export function Login() {
                 login(query: $query) {
                     error,
                     success,
-                    user{
+                    data{
                         id,
                         email,
                         role,
@@ -74,7 +74,7 @@ export function Login() {
           setError({});
           setHasErrors(false);
         }
-        if (obj.login.user) setUser(obj.login.user);
+        if (obj.login.data) setUser(obj.login.data);
       });
     }
   }

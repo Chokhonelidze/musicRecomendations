@@ -17,7 +17,11 @@ UPDATE public.songs set link='/downloads/Nantes.mp3' where song_id = 7738
 
 SELECT * FROM public.song where song_id = 4
 
-SELECT * FROM public.songs where user_id =3
+SELECT * FROM public.songs where user_id =
+
+SELECT * FROM "public"."songs" GROUP BY "song_id","id" ORDER BY "play_count", "song_id" DESC LIMIT 100
+
+SELECT * FROM public.downloads
 
 SELECT COUNT(*) FROM public.songs
 

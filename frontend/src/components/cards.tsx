@@ -52,7 +52,7 @@ export function Card(props:any) {
                 updateSong(song:$song) {
                   success,
                   errors,
-                  song{
+                  data{
                     title,
                     play_count,
                     user_id
@@ -74,14 +74,14 @@ export function Card(props:any) {
                 createSong(song:$song){
                   success,
                   errors,
-                  song{
+                  data{
                     id,
                     user_id,
                     song_id,
                     play_count,
                     title,
                     release,
-                    artist_name,
+                    artist,
                     year
                   }
                 }
@@ -96,7 +96,7 @@ export function Card(props:any) {
             play_count: newRating,
             title: props.song.title,
             release: props.song.release,
-            artist_name: props.song.artist_name,
+            artist: props.song.artist,
             link: props.song.local_link,
             year: props.song.year,
           },

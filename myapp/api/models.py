@@ -55,7 +55,7 @@ class Song(db.Model):
     song_id = db.Column(db.Integer,primary_key=True)
     title = db.Column(db.String(500),index=True)
     release = db.Column(db.String(300))
-    artist_name = db.Column(db.String(300),index=True)
+    artist = db.Column(db.String(300),index=True)
     year = db.Column(db.Integer)
     link = db.Column(db.String(1000))
     localLink = db.Column(db.String(1000))
@@ -64,7 +64,7 @@ class Song(db.Model):
             "song_id":self.song_id,
             "title":self.title,
             "release":self.release,
-            "artist_name":self.artist_name,
+            "artist":self.artist,
             "year":self.year,
             "local_link":self.localLink,
             "link":self.link
@@ -79,7 +79,7 @@ class Songs(db.Model):
     play_count = db.Column(db.Integer)
     title = db.Column(db.String(500),index=True)
     release = db.Column(db.String(300))
-    artist_name = db.Column(db.String(300),index=True)
+    artist = db.Column(db.String(300),index=True)
     year = db.Column(db.Integer)
     link = db.Column(db.String(1000))
     def to_dict(self):
@@ -90,7 +90,7 @@ class Songs(db.Model):
             "play_count":self.play_count,
             "title":self.title,
             "release":self.release,
-            "artist_name":self.artist_name,
+            "artist":self.artist,
             "local_link":self.link,
             "year":self.year
         }
@@ -111,7 +111,7 @@ with app.app_context():
                 play_count = row[3],
                 title = row[4],
                 release = row[5],
-                artist_name = row[6],
+                artist = row[6],
                 year = row[7]
             )
             today = date.today()
@@ -133,7 +133,7 @@ with app.app_context():
                     song_id = row[2],
                     title = row[4],
                     release = row[5],
-                    artist_name = row[6],
+                    artist = row[6],
                     year = row[7]
                     )
                 db.session.add(fsong)

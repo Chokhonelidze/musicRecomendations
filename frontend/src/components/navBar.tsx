@@ -58,7 +58,7 @@ function FSearch(props:props_type) {
     color:"blue"
   },
   {
-    value:'artist_name',
+    value:'artist',
     label:'Artist name',
     color:'green'
   },

@@ -8,7 +8,7 @@ interface errors {
     main?:string|[string],
     title?:string|[string],
     name?:string|[string],
-    artist_name?:string|[string],
+    artist?:string|[string],
     release?:string|[string],
     year?:string|[string],
     youtubeID?:string|[string],
@@ -21,7 +21,7 @@ export function CreateSong() {
 
     function Form() {
         const [title,setTitle] = React.useState("");
-        const [artist_name,setArtist_name] = React.useState("");
+        const [artist,setartist] = React.useState("");
         const [link,setLink] = React.useState("");
         const [release,setRelease] = React.useState("");
         const [year,setYear] = React.useState("");
@@ -31,7 +31,7 @@ export function CreateSong() {
             try{
                 /*
                 validator(title,"name");
-                validator(artist_name,"name");
+                validator(artist,"name");
                 validator(link,"youtubeID");
                 validator(release,"name");
                 validator(year,"year");
@@ -46,11 +46,11 @@ export function CreateSong() {
                     createNewPureSong(song:$song){
                     success,
                     errors,
-                    song{
+                    data{
                         song_id,
                         link,
                         title,
-                        artist_name,
+                        artist,
                         year,
                     }
                     }
@@ -58,7 +58,7 @@ export function CreateSong() {
                 `;
                 query(q,{song:{
                     "title":title,
-                    "artist_name":artist_name,
+                    "artist":artist,
                     "link":`//www.youtube.com/embed/${link}?autoplay=1&mute=0`,
                     "release":release,
                     "year":parseInt(year),
@@ -118,28 +118,28 @@ export function CreateSong() {
                                     {hasErrors ? <>{errors["title"]}</> : ""}
                                 </h5>
                     Artist Name: <input type="text" 
-                                value={artist_name} 
-                                name="artist_name" 
+                                value={artist} 
+                                name="artist" 
                                 className="form-control" 
                                 onChange={(e)=>{                           
                                     try {
-                                        setArtist_name(e.target.value);
+                                        setartist(e.target.value);
                                         validator(e.target.value,"name");
                                         let err = errors;
-                                        err['artist_name'] = ""
+                                        err['artist'] = ""
                                         setErrors(err);
                                         setHasErrors(false);
                                     }
                                     catch(err:any){
                                         let errs = errors;
-                                        errs['artist_name'] = err.name;
+                                        errs['artist'] = err.name;
                                         setErrors(errs);
                                         setHasErrors(true);
                                     }
                                 }} />
                                 <br/>
                                 <h5 className="text-danger">
-                                    {hasErrors ? <>{errors["artist_name"]}</> : ""}
+                                    {hasErrors ? <>{errors["artist"]}</> : ""}
                                 </h5>
                     Release: <input type="text" 
                                 value={release} 
@@ -166,7 +166,7 @@ export function CreateSong() {
                                 </h5>
                     Year: <input type="text" 
                                 value={year} 
-                                name="artist_name" 
+                                name="artist" 
                                 className="form-control" 
                                 onChange={(e)=>{
                                     try {
@@ -190,7 +190,7 @@ export function CreateSong() {
                                 </h5>
                     Video ID: <input type="text" 
                                 value={link} 
-                                name="artist_name" 
+                                name="artist" 
                                 className="form-control" 
                                 onChange={(e)=>{
                                     try {

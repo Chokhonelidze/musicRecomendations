@@ -13,14 +13,14 @@ export type createUserResult_type = {
   createUser:{
     success: boolean,
     errors: [string],
-    user: user_type
+    data: user_type
   }
 }
 export type loginOutput_type = { 
   login:{
     success: boolean,
     error: string,
-    user:user_type
+    data:user_type
   }
 }
 /**
@@ -30,7 +30,7 @@ export type pureSong_type = {
   song_id:number,
   title:string,
   release:string,
-  artist_name:string,
+  artist:string,
   link:string,
   year:number,
   predict:string,
@@ -40,7 +40,7 @@ export type pureSongsResult_type = {
   listPureSongs:{
   success: boolean
   errors: [string]
-  songs:[pureSong_type]
+  data:[pureSong_type]
   }
 }
 /**
@@ -53,29 +53,29 @@ export type song_type = {
   play_count:number,
   title:number,
   release:string,
-  artist_name:number,
-  local_link:string,
+  artist:number,
+  link:string,
   year:number,
 }
 export type songsResult_type = {
   listSongs:{
     success: boolean,
     errors: [string],
-    songs:[song_type]
+    data:[song_type]
   }
 }
 export type getSong_type = {
   getSong :{
     success: boolean,
     errors: [string],
-    song:pureSong_type
+    data:pureSong_type
   }
 }
 export type predictOutput_type = {
   predictSong:{
     success: boolean,
     errors: [string],
-    predict:[prediction_type]
+    data:[prediction_type]
   }
 }
 export type prediction_type = {

@@ -1,4 +1,4 @@
-,user_id,song_id,play_count,title,release,artist_name,year
+,user_id,song_id,play_count,title,release,artist,year
 200,6958,447,1,Daisy And Prudence,Distillation,Erin McKeown,2000
 202,6958,512,1,The Ballad of Michael Valentine,Sawdust,The Killers,2004
 203,6958,549,1,I Stand Corrected (Album),Vampire Weekend,Vampire Weekend,2007
