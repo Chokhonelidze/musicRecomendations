@@ -30,7 +30,7 @@ export type pureSong_type = {
   song_id:number,
   title:string,
   release:string,
-  artist:string,
+  artist_name:string,
   link:string,
   year:number,
   predict:string,

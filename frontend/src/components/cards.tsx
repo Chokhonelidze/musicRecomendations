@@ -8,8 +8,9 @@ import { user_type } from "../functions/types";
 
 
 export function Card(props:any) {
-
   const [user] = React.useContext(UserContext) as [user_type];
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [song, setSong] = React.useState<any>(props.song);
 
   const download = async (link:string) => {
 
@@ -41,12 +42,19 @@ export function Card(props:any) {
 
   };
   let style = `card border-primary mb-3 cards ${props?.style}`;
-  function searchVideo(term:string, id:number, link:string = "",localLink:string="") {
-    props.videoSearch(term, id, link,localLink);
+  async function searchVideo(term:string, id:number, link:string = "", localLink:string = "") {
+    setLoading(true);
+    const newLink = await props.videoSearch(term, id, link, localLink);
+    let tempSong = { ...song };
+    tempSong.video_link = newLink;
+    tempSong.local_link = localLink || newLink;
+    console.log(tempSong);
+    setSong(tempSong);
+    setLoading(false);
   }
   function changeStar(newRating:number) {
-    console.log(props.song);
-    if (props.song.play_count) {
+    console.log(song);
+    if (song.play_count) {
       const q = `
             mutation updateSong($song:updateSong!){
                 updateSong(song:$song) {
@@ -62,13 +70,15 @@ export function Card(props:any) {
             `;
       query(
         q,
-        { song: { id: props.song.id, play_count: newRating } },
+        { song: { id: song.id, play_count: newRating } },
         user,
         (data:string) => {
           console.log(data);
+          props.refresh();
         }
       );
     } else {
+      setLoading(true);
       const q = `
             mutation createSong($song:createSong!){
                 createSong(song:$song){
@@ -81,7 +91,7 @@ export function Card(props:any) {
                     play_count,
                     title,
                     release,
-                    artist,
+                    artist_name,
                     year
                   }
                 }
@@ -92,18 +102,19 @@ export function Card(props:any) {
         {
           song: {
             user_id: user.id as number,
-            song_id: parseInt(props.song.song_id),
+            song_id: parseInt(song.song_id),
             play_count: newRating,
-            title: props.song.title,
-            release: props.song.release,
-            artist: props.song.artist,
-            link: props.song.local_link,
-            year: props.song.year,
+            title: song.title,
+            release: song.release,
+            artist_name: song.artist_name,
+            local_link: song.local_link,
+            year: song.year,
           },
         },
         user,
         (data:string) => {
           console.log(data);
+          setLoading(false);
         }
       ).then(() => {
         if (props?.refresh) {
@@ -111,6 +122,28 @@ export function Card(props:any) {
         }
       });
     }
+  }
+  if(loading){
+    return (
+      <div className={style}>
+        <div className="card-header">{props.header}</div>
+        <div
+          className="card-body text-dark"
+          style={{ cursor: "pointer" }}
+        >
+          <h5 className="card-title">{props.title}</h5>
+          <p className="card-text">{props.text}</p>
+          {props?.predict ? (
+            <h6>Predicted Star:{Number(props.predict).toFixed(2)}</h6>
+          ) : (
+            ""
+          )}
+        </div>
+        <div className="card-footer">
+          Loading...
+        </div>
+      </div>
+    );
   }
   return (
     <div className={style}>
@@ -121,9 +154,9 @@ export function Card(props:any) {
         onClick={() => {
           searchVideo(
             `${props.title} ${props.header}`,
-            props.song.song_id,
-            props?.song?.link,
-            props?.song?.local_link
+            song.song_id,
+            song?.video_link,
+            song?.local_link
           );
         }}
       >
@@ -139,13 +172,13 @@ export function Card(props:any) {
       <Rating
           size={24}
           fillColor='gold'
-          initialValue={props?.song?.play_count}
+          initialValue={song?.play_count}
           onClick={changeStar}
         />
-        {props?.song?.local_link ? (
+        {song?.local_link ? (
           <button
             onClick={() => {
-              download(props?.song?.local_link);
+              download(song?.local_link ? song?.local_link : song?.video_link);
             }}
             style={{
               position:"relative",

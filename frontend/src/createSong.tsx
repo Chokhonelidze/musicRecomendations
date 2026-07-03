@@ -48,9 +48,9 @@ export function CreateSong() {
                     errors,
                     data{
                         song_id,
-                        link,
+                        local_link,
                         title,
-                        artist,
+                        artist_name,
                         year,
                     }
                     }
@@ -58,8 +58,8 @@ export function CreateSong() {
                 `;
                 query(q,{song:{
                     "title":title,
-                    "artist":artist,
-                    "link":`//www.youtube.com/embed/${link}?autoplay=1&mute=0`,
+                    "artist_name":artist,
+                    "video_link":`https://www.youtube.com/watch?v=${link as string}?autoplay=1&mute=0`,
                     "release":release,
                     "year":parseInt(year),
                 }},user,(d:any)=>{
@@ -190,7 +190,7 @@ export function CreateSong() {
                                 </h5>
                     Video ID: <input type="text" 
                                 value={link} 
-                                name="artist" 
+                                name="video_link" 
                                 className="form-control" 
                                 onChange={(e)=>{
                                     try {
@@ -203,7 +203,7 @@ export function CreateSong() {
                                     }
                                     catch(err:any){
                                         let errs = errors;
-                                        errs['youtubeID'] = err.link;
+                                        errs['youtubeID'] = err.video_link;
                                         setErrors(errs);
                                         setHasErrors(true);
                                     }
@@ -228,7 +228,7 @@ export function CreateSong() {
         </div>);
     }
     let view:JSX.Element | string = "";
-    if(user?.role === 1) {
+    if(user?.role === 'ADMIN') {
         if(showNewSong) {
             view = <Form  />
         }
